@@ -6,11 +6,16 @@
 ;;; Code:
 
 (use-package python
-  :ensure nil
+  :straight nil
   :mode ("\\.py\\'" . python-mode)
   :custom
   (python-shell-dedicated 'project)
-  (python-indent-guess-indent-offset-verbose nil))
+  (python-indent-guess-indent-offset-verbose nil)
+  :config
+  (with-eval-after-load 'eglot
+    ;; Use ty as the Python language server.
+    (add-to-list 'eglot-server-programs
+                 '((python-mode python-ts-mode) . ("ty" "server")))))
 
 (provide 'init-python)
 ;;; init-python.el ends here

@@ -14,18 +14,27 @@
 ;; `cat /proc/sys/fs/pipe-max-size` to check the max value.
 (setq read-process-output-max (* 4 1024 1024))
 
-(require 'package)
-(setq package-archives
-      '(("melpa"  . "https://melpa.org/packages/")
-        ("gnu"    . "https://elpa.gnu.org/packages/")
-        ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
+;; Bootstrap `straight.el'
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name
+        "straight/repos/straight.el/bootstrap.el"
+        (or (bound-and-true-p straight-base-dir)
+            user-emacs-directory)))
+      (bootstrap-version 7))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
 
 ;; Bootstrap `use-package'
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
+(straight-use-package 'use-package)
+(setq straight-use-package-by-default t)
 (eval-and-compile
-  (setq use-package-always-ensure nil)
   (setq use-package-always-defer nil)
   (setq use-package-always-demand nil)
   (setq use-package-expand-minimally nil)
@@ -35,18 +44,8 @@
 
 ;; Keep ~/.emacs.d/ clean.
 (use-package no-littering
-  :ensure t
+  :straight t
   :demand t)
-
-;; Bootstrap `quelpa'.
-(use-package quelpa
-  :ensure t
-  :commands quelpa
-  :custom
-  (quelpa-git-clone-depth 1)
-  (quelpa-self-upgrade-p nil)
-  (quelpa-update-melpa-p nil)
-  (quelpa-checkout-melpa-p nil))
 
 ;; --debug-init implies `debug-on-error'.
 (setq debug-on-error init-file-debug)
@@ -68,16 +67,8 @@
 (require 'init-minibuffer)
 
 ;; standalone apps
-(require 'init-org)
 (require 'init-text)
-(require 'init-mail)
 (require 'init-shell)
-(require 'init-spell)
-(require 'init-gpt)
-
-;; MacOS specific
-(when (eq system-type 'darwin)
-  (require 'init-macos))
 
 (when (file-exists-p custom-file)
   (load custom-file))

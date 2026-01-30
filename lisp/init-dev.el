@@ -9,7 +9,7 @@
 
 ;; Compilation Mode
 (use-package compile
-  :ensure nil
+  :straight nil
   :hook (compilation-filter . ansi-color-compilation-filter)
   :custom
   (compilation-always-kill t)
@@ -19,14 +19,14 @@
 
 ;; The unified debugger
 (use-package gud
-  :ensure nil
+  :straight nil
   :hook (gud-mode . gud-tooltip-mode)
   :custom
   (gud-highlight-current-line t))
 
 ;; GDB specific config
 (use-package gdb-mi
-  :ensure nil
+  :straight nil
   :commands gdb
   :custom
   (gdb-show-main t)
@@ -39,20 +39,20 @@
 
 ;; #number can be clickable.
 (use-package bug-reference
-  :ensure nil
+  :straight nil
   :bind (:map bug-reference-map
          ("C-c C-o" . bug-reference-push-button)))
 
 ;; Insert SPDX license header
 (use-package spdx
-  :ensure t
+  :straight t
   :hook (prog-mode . spdx-tempo-setup)
   :custom
   (spdx-ignore-deprecated t))
 
 ;; Highlight TODO
 (use-package hl-todo
-  :ensure t
+  :straight t
   :hook (after-init . global-hl-todo-mode)
   :bind (:map hl-todo-mode-map
          ("C-c t p" . hl-todo-previous)
@@ -63,14 +63,14 @@
 
 ;; Show trailing whitespaces
 (use-package whitespace
-  :ensure nil
+  :straight nil
   :hook ((prog-mode markdown-mode conf-mode) . whitespace-mode)
   :custom
   (whitespace-style '(face trailing)))
 
 ;; Quickrun codes, including cpp. awesome!
 (use-package quickrun
-  :ensure t
+  :straight t
   :bind ("C-c x" . quickrun)
   :custom
   (quickrun-focus-p nil)
@@ -78,7 +78,7 @@
 
 ;; Project management
 (use-package projectile
-  :ensure t
+  :straight t
   :hook (after-init . projectile-mode)
   :bind (:map projectile-mode-map
          ("C-c p" . projectile-command-map))
@@ -97,11 +97,11 @@
   (projectile-ignored-projects `("~/"
                                  "/tmp/"
                                  "/private/tmp/"
-                                 ,package-user-dir)))
+                                 ,(expand-file-name "straight/" user-emacs-directory))))
 
 ;; Lint tool
 (use-package flycheck
-  :ensure t
+  :straight t
   :hook (prog-mode . flycheck-mode)
   :custom
   (flycheck-temp-prefix ".flycheck")
@@ -111,7 +111,7 @@
 
 ;; xref
 (use-package xref
-  :ensure nil
+  :straight nil
   :hook ((xref-after-return xref-after-jump) . recenter)
   :custom
   ;; Emacs 28+
@@ -127,7 +127,7 @@
 
 ;; A fancy ctags frontend
 (use-package citre
-  :ensure t
+  :straight t
   :init
   ;; Load the prelude.
   (require 'citre-config)
@@ -141,15 +141,6 @@
   (citre-enable-capf-integration nil)
   (citre-auto-enable-citre-mode-modes '(prog-mode)))
 
-;; Browse devdocs.io
-(use-package devdocs
-  :ensure t
-  :bind ("C-c b" . devdocs-lookup)
-  :config
-  (add-to-list 'completion-category-overrides '(devdocs (styles . (flex))))
-  :custom
-  (devdocs-window-select t))
-
 ;; Hiding structured data
 ;;
 ;; zm hide-all
@@ -158,7 +149,7 @@
 ;; zo show-block
 ;; zc hide-block
 (use-package hideshow
-  :ensure nil
+  :straight nil
   :hook (prog-mode . hs-minor-mode)
   :custom
   (hs-show-indicators t)
@@ -168,12 +159,12 @@
 
 ;; Antlr mode
 (use-package antlr-mode
-  :ensure nil
+  :straight nil
   :mode ("\\.g4\\'" . antlr-mode))
 
 ;; XML
 (use-package nxml-mode
-  :ensure nil
+  :straight nil
   :mode (("\\.xml\\'" . nxml-mode)
          ("\\.rss\\'" . nxml-mode))
   :custom
@@ -182,26 +173,26 @@
 
 ;; Config files mode
 (use-package yaml-mode
-  :ensure t
+  :straight t
   :mode ("\\.ya?ml\\'" . yaml-mode))
 
 ;; The dot-language
 (use-package graphviz-dot-mode
-  :ensure t
+  :straight t
   :mode ("\\.dot\\'" . graphviz-dot-mode)
   :custom
   (graphviz-dot-indent-width 2))
 
 ;; Syntax highlighting for systemd files
 (use-package conf-mode
-  :ensure nil
+  :straight nil
   :mode ((rx "."
              (or "automount" "busname" "link" "mount" "netdev" "network"
                  "path" "service" "slice" "socket" "swap" "target" "timer")
              string-end) . conf-toml-mode))
 
 (use-package treesit
-  :ensure nil
+  :straight nil
   :config
   (setq treesit-language-source-alist
         '((c . ("https://github.com/tree-sitter/tree-sitter-c"))
@@ -210,12 +201,8 @@
 
 (require 'init-cpp)
 (require 'init-rust)
-(require 'init-ocaml)
-(require 'init-bazel)
-(require 'init-haskell)
 (require 'init-python)
 (require 'init-elisp)
-(require 'init-sh)
 
 (provide 'init-dev)
 

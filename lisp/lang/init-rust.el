@@ -6,12 +6,8 @@
 ;;; Code:
 
 (use-package rust-mode
-  :ensure t
+  :straight t
   :mode ("\\.rs\\'" . rust-mode)
-  :config
-  (with-no-warnings
-    (with-eval-after-load 'lsp-mode
-      (setq lsp-rust-analyzer-diagnostics-disabled ["unresolved-extern-crate"])))
   :custom
   (rust-indent-where-clause t)
   (rust-load-optional-libraries t))

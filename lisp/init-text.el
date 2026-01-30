@@ -8,12 +8,12 @@
 
 ;; Pixel alignment for org/markdown tables
 (use-package valign
-  :ensure t
+  :straight t
   :hook ((markdown-mode org-mode) . valign-mode))
 
 ;; The markdown mode is awesome! unbeatable
 (use-package markdown-mode
-  :ensure t
+  :straight t
   :mode ("README\\(?:\\.md\\)?\\'" . gfm-mode)
   :hook (markdown-mode . visual-line-mode)
   :bind (:map markdown-mode-style-map
@@ -34,7 +34,7 @@
 
 ;; ReStructuredText
 (use-package rst
-  :ensure nil
+  :straight nil
   :hook ((rst-mode . visual-line-mode)
          (rst-adjust . rst-toc-update)))
 

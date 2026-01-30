@@ -4,13 +4,6 @@
 
 ;;; Code:
 
-(defmacro set-company-backends-for! (mode &rest backends)
-  "Set `company-backends' for MODE with BACKENDS."
-  `(add-hook (intern (format "%s-hook" ',mode))
-             (lambda ()
-               (company-mode +1)
-               (setq-local company-backends ',backends))))
-
 (defmacro shut-up! (func)
   "Silence FUNC."
   `(advice-add ,func :around
@@ -74,6 +67,20 @@ confirmation."
   (interactive)
   (kill-new (buffer-name))
   (message "Copying '%s' to clipboard" (buffer-name)))
+
+(defun +kill-other-buffers ()
+  "Kill all buffers except the current one."
+  (interactive)
+  (let ((current (current-buffer)))
+    (dolist (buf (buffer-list))
+      (unless (eq buf current)
+        (kill-buffer buf)))))
+
+(defun +kill-all-buffers ()
+  "Kill all buffers."
+  (interactive)
+  (dolist (buf (buffer-list))
+    (kill-buffer buf)))
 
 (defun +transient-tab-bar-history ()
   "Transient map of command `tab-bar-history'."

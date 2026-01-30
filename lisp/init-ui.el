@@ -5,9 +5,13 @@
 
 ;;; Code:
 
+;; relative number
+(global-display-line-numbers-mode t)
+(setq display-line-numbers-type 'visual)
+
 ;; Use Iosvkem in terminals
 (use-package doom-themes
-  :ensure t
+  :straight t
   :config
   (doom-themes-org-config)
 
@@ -17,7 +21,7 @@
     (load-theme theme t)))
 
 (use-package doom-modeline
-  :ensure t
+  :straight t
   :hook (after-init . doom-modeline-mode)
   :custom
   (doom-modeline-irc nil)
@@ -30,7 +34,7 @@
 
 ;; Customize popwin behavior
 (use-package shackle
-  :ensure t
+  :straight t
   :hook (after-init . shackle-mode)
   :custom
   (shackle-default-size 0.5)
@@ -55,7 +59,7 @@
                    ("\\*eldoc\\( for \\)?.*\\*" :select t   :align t :size 15 :regexp t))))
 
 (use-package help
-  :ensure nil
+  :straight nil
   :custom
   (help-window-select t)
   (help-window-keep-selected t)
@@ -66,18 +70,18 @@
 ;; You can still use `winner-mode' on Emacs 26 or early. On Emacs 27, it's
 ;; preferred over `winner-mode' for better compatibility with `tab-bar-mode'.
 (use-package tab-bar
-  :ensure nil
+  :straight nil
   :hook (after-init . tab-bar-history-mode)
   :custom
   (tab-bar-history-buttons-show nil))
 
 (use-package nerd-icons
-  :ensure t
+  :straight t
   :when (display-graphic-p)
   :demand t)
 
 (use-package dashboard
-  :ensure t
+  :straight t
   :init
   ;; Format: "(icon title help action face prefix suffix)"
   (setq dashboard-navigator-buttons `(((,(if (fboundp 'nerd-icons-octicon) (nerd-icons-octicon "nf-oct-mark_github") "★")
@@ -87,7 +91,7 @@
                                        (,(if (fboundp 'nerd-icons-octicon) (nerd-icons-octicon "nf-oct-alert") "⚑")
                                         "Issue" "Report issue" (lambda (&rest _) (browse-url issue-url)) warning)
                                        (,(if (fboundp 'nerd-icons-octicon) (nerd-icons-octicon "nf-oct-download") "♺")
-                                        "Upgrade" "Upgrade packages synchronously" (lambda (&rest _) (package-upgrade-all nil)) success))))
+                                        "Upgrade" "Upgrade packages synchronously" (lambda (&rest _) (straight-pull-all)) success))))
   (dashboard-setup-startup-hook)
   :config
   (defconst homepage-url "https://github.com/condy0919/.emacs.d")

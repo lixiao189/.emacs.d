@@ -6,21 +6,21 @@
 ;;; Code:
 
 (use-package vertico
-  :ensure t
+  :straight t
   :hook ((after-init . vertico-mode)
          (minibuffer-setup . vertico-repeat-save))
   :custom
   (vertico-sort-function nil))
 
 (use-package embark
-  :ensure t
+  :straight t
   :bind (:map minibuffer-local-map
          ("M-o"     . embark-act)
          ("C-c C-c" . embark-export)
          ("C-c C-o" . embark-collect)))
 
 (use-package consult
-  :ensure t
+  :straight t
   :bind (([remap imenu]                  . consult-imenu)
          ([remap yank-pop]               . consult-yank-pop)
          ([remap goto-line]              . consult-goto-line)
@@ -57,11 +57,11 @@
 
 ;; Consult users will also want the embark-consult package.
 (use-package embark-consult
-  :ensure t
+  :straight t
   :defer t)
 
 (use-package marginalia
-  :ensure t
+  :straight t
   :hook (after-init . marginalia-mode))
 
 (provide 'init-minibuffer)

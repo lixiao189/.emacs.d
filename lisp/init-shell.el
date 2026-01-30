@@ -26,7 +26,7 @@
 ;; If you use bash, directory track is supported natively.
 ;; See https://www.emacswiki.org/emacs/AnsiTermHints for more information.
 (use-package term
-  :ensure nil
+  :straight nil
   :hook ((term-mode . shell-mode-common-init)
          (term-mode . term-mode-prompt-regexp-setup)
          (term-exec . term-mode-set-sentinel))
@@ -42,7 +42,7 @@
 
 ;; The Emacs shell & friends
 (use-package eshell
-  :ensure nil
+  :straight nil
   :hook ((eshell-mode . shell-mode-common-init)
          (eshell-mode . completion-preview-mode))
   :config
@@ -90,7 +90,7 @@ current directory."
   (eshell-cmpl-cycle-completions nil))
 
 (use-package em-hist
-  :ensure nil
+  :straight nil
   :hook (eshell-hist-load . eshell-hist-initialize)
   :bind (:map eshell-hist-mode-map
          ("M-r" . consult-history))
@@ -98,11 +98,11 @@ current directory."
   (eshell-history-size 10000))
 
 (use-package em-rebind
-  :ensure nil
+  :straight nil
   :commands eshell-delchar-or-maybe-eof)
 
 (use-package esh-mode
-  :ensure nil
+  :straight nil
   :bind (:map eshell-mode-map
          ([remap kill-region] . backward-kill-word)
          ([remap delete-char] . eshell-delchar-or-maybe-eof))
@@ -117,7 +117,7 @@ current directory."
 ;;
 ;; `shell' is recommended to use over `tramp'.
 (use-package shell
-  :ensure nil
+  :straight nil
   :hook ((shell-mode . shell-mode-common-init)
          (shell-mode . revert-tab-width-to-default))
   :config
@@ -148,7 +148,7 @@ If popup is focused, kill it."
 ;;
 ;; `eshell' is recommended to use over `tramp'.
 (use-package eshell
-  :ensure nil
+  :straight nil
   :bind ("M-`" . eshell-toggle)
   :config
   (defun eshell-toggle ()

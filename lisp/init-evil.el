@@ -8,7 +8,7 @@
 (require 'init-funcs)
 
 (use-package evil
-  :ensure t
+  :straight t
   :init
   (setq evil-disable-insert-state-bindings t)
   (setq evil-want-Y-yank-to-eol t)
@@ -16,8 +16,7 @@
   ;; Don't quit Emacs on `:q'.
   ;;
   ;; Rebind `f'/`s' to mimic `evil-snipe'.
-  :bind (([remap evil-quit] . kill-current-buffer)
-         :map evil-motion-state-map
+  :bind (:map evil-motion-state-map
          ("f" . evil-avy-goto-char-in-line)
          :map evil-normal-state-map
          ("s" . evil-avy-goto-char-timer))
@@ -30,7 +29,8 @@
   ;; Switch to the new window after splitting
   (evil-split-window-below t)
   (evil-vsplit-window-right t)
-  (evil-ex-complete-emacs-commands nil)
+  ;; Enable completing-read for : ex command Emacs command names (Vertico UI).
+  (evil-ex-complete-emacs-commands t)
   (evil-ex-interactive-search-highlight 'selected-window)
   ;; when `visual-line-mode' enabled, exchange j/k with gj/gk
   (evil-respect-visual-line-mode t)
@@ -42,11 +42,11 @@
   (evil-symbol-word-search t))
 
 (use-package evil-surround
-  :ensure t
+  :straight t
   :hook (after-init . global-evil-surround-mode))
 
 (use-package evil-collection
-  :ensure t
+  :straight t
   :hook (evil-mode . evil-collection-init)
   :bind (([remap evil-show-marks] . evil-collection-consult-mark)
          ([remap evil-show-jumps] . evil-collection-consult-jump-list))
@@ -61,7 +61,7 @@
 
 ;; evil leader map
 (use-package evil
-  :ensure nil
+  :straight nil
   :config
   (with-no-warnings
     ;; We use "SPC" as the leader key, "SPC m" as the localleader key. Due to the
@@ -79,7 +79,6 @@
     ;;
     ;; If you know how to fix that, let me know. Thanks.
     (evil-set-leader 'normal (kbd "SPC"))
-    (evil-set-leader 'normal (kbd "<leader>m") :localleader)
 
     (defun define-leader-key (state map localleader &rest bindings)
       "Define leader key in MAP when STATE, a wrapper for
@@ -117,56 +116,25 @@ if LOCALLEADER is nil, otherwise \"<localleader>\"."
       ;; file
       "f"  '(:wk "files")
       "ff" 'find-file
-      "fF" 'find-file-other-window
-      "f/" 'find-file-other-window
-      "fC" '+copy-current-file
-      "fD" '+delete-current-file
-      "fy" '+copy-current-filename
-      "fR" '+rename-current-file
-      "fr" 'recentf-open-files
-      "fl" 'find-file-literally
-      "fo" 'find-sibling-file
-      "fj" 'dired-jump
-      "fJ" 'dired-jump-other-window
+      "fb" 'switch-to-buffer
+      "fw" 'consult-ripgrep
 
       ;; buffer & bookmark
       "b" '(:wk "bufmark")
       "bb" 'switch-to-buffer
-      "bB" 'switch-to-buffer-other-window
-      "bc" 'clone-indirect-buffer
-      "bC" 'clone-indirect-buffer-other-window
-      "by" '+copy-current-buffer-name
-      "bv" 'revert-buffer-quick
-      "bx" 'scratch-buffer
-      "bz" 'bury-buffer
-      ;; --------------
-      "bm" 'bookmark-set
-      "bM" 'bookmark-set-no-overwrite
-      "bi" 'bookmark-insert
-      "br" 'bookmark-rename
-      "bd" 'bookmark-delete
-      "bw" 'bookmark-write
-      "bj" 'bookmark-jump
-      "bJ" 'bookmark-jump-other-window
-      "bl" 'bookmark-bmenu-list
-      "bs" 'bookmark-save
+      "bc" '+kill-other-buffers
+      "bC" '+kill-all-buffers
+      "c" 'kill-current-buffer
 
-      ;; code
-      "c" '(:wk "code")
-      "cd" 'rmsbolt-compile
-      "cc" 'compile
-      "cC" 'recompile
-      "ck" 'kill-compilation
-      "cl" '+switch-to-compilation
-      "cw" 'delete-trailing-whitespace
-      "cx" 'quickrun
-
-      ;; window
-      "w" 'evil-window-map
-      "wx" 'kill-buffer-and-window
-      "wu" '+transient-tab-bar-history
-      "w-" 'split-window-vertically
-      "w/" 'split-window-horizontally
+      ;; language
+      "l" '(:wk "language")
+      "la" 'eglot-code-actions
+      "ld" 'flymake-show-diagnostic
+      "lD" 'flymake-show-buffer-diagnostics
+      "lf" 'eglot-format-buffer
+      "lG" 'xref-find-apropos
+      "lr" 'eglot-rename
+      "ls" 'consult-imenu
 
       ;; tab
       "t" '(:wk "tab")
@@ -179,18 +147,16 @@ if LOCALLEADER is nil, otherwise \"<localleader>\"."
       "tt" 'tab-bar-switch-to-tab
       "t'" 'tab-bar-switch-to-recent-tab
       "tr" 'tab-bar-rename-tab
-
-      ;; search
-      "s" '(:wk "search")
-      "sj" 'evil-show-jumps
-      "sm" 'evil-show-marks
-      "sr" 'evil-show-registers
-      "si" 'imenu
-      "sp" 'consult-ripgrep
-      "ss" 'consult-line
-
+      
       ;; project
       "p" 'projectile-command-map
+
+      ;; git
+      "g" '(:wk "git")
+      "gr" 'diff-hl-revert-hunk
+      "gR" 'vc-revert
+      "gs" 'diff-hl-stage-current-hunk
+      "gp" 'diff-hl-show-hunk
 
       ;; app
       "a" '(:wk "app")
@@ -205,56 +171,21 @@ if LOCALLEADER is nil, otherwise \"<localleader>\"."
       "ol" 'org-store-link
       "ot" 'ansi-term
       "oe" 'eshell
-      "os" 'shell)
+      "os" 'shell
 
-    (with-eval-after-load 'org
-      (define-leader-key 'normal org-mode-map :localleader
-        "." 'org-goto
-        "a" 'org-archive-subtree
-        "d" 'org-deadline
-        "e" 'org-set-effort
-        "f" 'org-footnote-action
-        "l" 'org-lint
-        "o" 'org-toggle-ordered-property
-        "p" 'org-set-property
-        "q" 'org-set-tags-command
-        "r" 'org-refile
-        "s" 'org-schedule
-        "t" 'org-todo
-        "T" 'org-todo-list
+    (evil-define-key* 'normal 'global (kbd "]d") #'flymake-goto-next-error)
+    (evil-define-key* 'normal 'global (kbd "[d") #'flymake-goto-prev-error)
+    (evil-define-key* 'normal 'global (kbd "]g") #'diff-hl-next-hunk)
+    (evil-define-key* 'normal 'global (kbd "[g") #'diff-hl-previous-hunk)
+    (evil-define-key* 'normal 'global (kbd "]b") #'next-buffer)
+    (evil-define-key* 'normal 'global (kbd "[b") #'previous-buffer)
 
-        ;; babel
-        "bp" 'org-babel-previous-src-block
-        "bn" 'org-babel-next-src-block
-        "be" 'org-babel-expand-src-block
-        "bg" 'org-babel-goto-named-src-block
-        "bs" 'org-babel-execute-subtree
-        "bb" 'org-babel-execute-buffer
-        "bt" 'org-babel-tangle
-        "bf" 'org-babel-tangle-file
-        "bc" 'org-babel-check-src-block
-        "bi" 'org-babel-insert-header-arg
-        "bI" 'org-babel-view-src-block-info
-        "bk" 'org-babel-remove-result-one-or-many
-
-        ;; clock
-        "cc" 'org-clock-in
-        "cC" 'org-clock-out
-        "cd" 'org-clock-mark-default-task
-        "ce" 'org-clock-modify-effort-estimate
-        "cg" 'org-clock-goto
-        "cl" 'org-clock-in-last
-        "cr" 'org-clock-report
-        "cs" 'org-clock-display
-        "cx" 'org-clock-cancel
-        "c=" 'org-clock-timestamps-up
-        "c-" 'org-clock-timestamps-down
-
-        ;; insert
-        "id" 'org-insert-drawer
-        "in" 'org-add-note
-        "it" 'org-time-stamp-inactive
-        "iT" 'org-time-stamp))
+    ;; Window navigation on Ctrl+h/j/k/l in normal/visual states only.
+    (require 'windmove)
+    (evil-define-key* 'normal 'global (kbd "C-h") #'windmove-left)
+    (evil-define-key* 'normal 'global (kbd "C-j") #'windmove-down)
+    (evil-define-key* 'normal 'global (kbd "C-k") #'windmove-up)
+    (evil-define-key* 'normal 'global (kbd "C-l") #'windmove-right)
 
     (with-eval-after-load 'elisp-mode
       (dolist (keymap (list emacs-lisp-mode-map lisp-interaction-mode-map))

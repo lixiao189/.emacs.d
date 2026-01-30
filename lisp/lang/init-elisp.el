@@ -7,7 +7,7 @@
 (require 'init-funcs)
 
 (use-package elisp-mode
-  :ensure nil
+  :straight nil
   :bind (:map emacs-lisp-mode-map
          ("C-c C-c" . eval-to-comment)
          :map lisp-interaction-mode-map
@@ -25,10 +25,6 @@
         (goto-char start)
         (forward-line 1)
         (insert eval-as-comment-prefix)))))
-
-(use-package ielm
-  :ensure nil
-  :hook (ielm-mode . company-mode))
 
 (provide 'init-elisp)
 
