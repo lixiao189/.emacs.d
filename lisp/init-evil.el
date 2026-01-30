@@ -171,7 +171,7 @@ if LOCALLEADER is nil, otherwise \"<localleader>\"."
       "ol" 'org-store-link
       "ot" 'ansi-term
       "oe" 'eshell
-      "os" 'shell
+      "os" 'shell)
 
     (evil-define-key* 'normal 'global (kbd "]d") #'flymake-goto-next-error)
     (evil-define-key* 'normal 'global (kbd "[d") #'flymake-goto-prev-error)
