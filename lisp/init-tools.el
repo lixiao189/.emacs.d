@@ -11,7 +11,6 @@
   :hook (after-init . which-key-mode)
   :config
   (which-key-add-key-based-replacements
-    "C-c !" "flycheck"
     "C-c @" "hideshow"
     "C-c i" "ispell"
     "C-c t" "hl-todo"
