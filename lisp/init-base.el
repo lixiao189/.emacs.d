@@ -14,6 +14,15 @@
       inhibit-startup-message t
       inhibit-startup-buffer-menu t)
 
+;; Start with *scratch* buffer
+(setq initial-buffer-choice t)
+
+;; Use text-mode for *scratch* buffer instead of lisp-interaction-mode
+(setq initial-major-mode 'text-mode)
+
+;; Remove default message in *scratch* buffer
+(setq initial-scratch-message nil)
+
 ;; Pixelwise resize
 (setq window-resize-pixelwise t
       frame-resize-pixelwise t)
@@ -447,7 +456,6 @@ Else, call `comment-or-uncomment-region' on the current line."
   (ibuffer-saved-filter-groups
    '(("Default"
       ("Emacs" (or (name . "\\*scratch\\*")
-                   (name . "\\*dashboard\\*")
                    (name . "\\*compilation\\*")
                    (name . "\\*Backtrace\\*")
                    (name . "\\*Packages\\*")

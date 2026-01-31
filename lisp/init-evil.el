@@ -118,6 +118,7 @@ if LOCALLEADER is nil, otherwise \"<localleader>\"."
       "f"  '(:wk "files")
       "ff" 'find-file
       "fb" 'switch-to-buffer
+      "fs" 'consult-buffer
       "fw" 'consult-ripgrep
 
       ;; buffer & bookmark

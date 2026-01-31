@@ -80,40 +80,6 @@
   :when (display-graphic-p)
   :demand t)
 
-(use-package dashboard
-  :straight t
-  :init
-  ;; Format: "(icon title help action face prefix suffix)"
-  (setq dashboard-navigator-buttons `(((,(if (fboundp 'nerd-icons-octicon) (nerd-icons-octicon "nf-oct-mark_github") "★")
-                                        "GitHub" "Browse" (lambda (&rest _) (browse-url homepage-url)))
-                                       (,(if (fboundp 'nerd-icons-octicon) (nerd-icons-octicon "nf-oct-heart") "♥")
-                                        "Stars" "Show stars" (lambda (&rest _) (browse-url stars-url)))
-                                       (,(if (fboundp 'nerd-icons-octicon) (nerd-icons-octicon "nf-oct-alert") "⚑")
-                                        "Issue" "Report issue" (lambda (&rest _) (browse-url issue-url)) warning)
-                                       (,(if (fboundp 'nerd-icons-octicon) (nerd-icons-octicon "nf-oct-download") "♺")
-                                        "Upgrade" "Upgrade packages synchronously" (lambda (&rest _) (straight-pull-all)) success))))
-  (dashboard-setup-startup-hook)
-  :config
-  (defconst homepage-url "https://github.com/condy0919/.emacs.d")
-  (defconst stars-url (concat homepage-url "/stargazers"))
-  (defconst issue-url (concat homepage-url "/issues/new"))
-  :custom
-  (dashboard-startup-banner 'logo)
-  (dashboard-set-heading-icons t)
-  (dashboard-set-file-icons t)
-  (dashboard-items '((recents   . 10)
-                     (projects  . 7)))
-  (dashboard-startupify-list '(dashboard-insert-banner
-                               dashboard-insert-newline
-                               dashboard-insert-banner-title
-                               dashboard-insert-newline
-                               dashboard-insert-navigator
-                               dashboard-insert-newline
-                               dashboard-insert-init-info
-                               dashboard-insert-items
-                               dashboard-insert-newline
-                               dashboard-insert-footer)))
-
 (provide 'init-ui)
 
 ;;; init-ui.el ends here
