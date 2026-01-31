@@ -12,6 +12,15 @@
   :custom
   (vertico-sort-function nil))
 
+;; Orderless: powerful completion style for flexible matching
+(use-package orderless
+  :straight t
+  :custom
+  ;; Configure a custom style dispatcher (optional)
+  (completion-styles '(orderless basic))
+  (completion-category-defaults nil)
+  (completion-category-overrides '((file (styles partial-completion)))))
+
 (use-package embark
   :straight t
   :bind (:map minibuffer-local-map

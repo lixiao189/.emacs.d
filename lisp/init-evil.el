@@ -114,7 +114,7 @@ if LOCALLEADER is nil, otherwise \"<localleader>\"."
       "'" 'vertico-repeat
       ";" 'avy-resume
 
-      "e" 'dired
+      "e" 'find-file
 
       ;; file
       "f"  '(:wk "files")
