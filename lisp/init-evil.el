@@ -114,9 +114,11 @@ if LOCALLEADER is nil, otherwise \"<localleader>\"."
       "'" 'vertico-repeat
       ";" 'avy-resume
 
+      "e" 'dired
+
       ;; file
       "f"  '(:wk "files")
-      "ff" 'find-file
+      "ff" 'consult-fd
       "fb" 'switch-to-buffer
       "fs" 'consult-buffer
       "fw" 'consult-ripgrep

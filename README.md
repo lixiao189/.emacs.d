@@ -6,6 +6,7 @@
 cargo install emacs-lsp-booster
 brew install gnu-tar # needed on mac
 brew install rg
+brew install fd
 ```
 
 ## Install emacs on mac os
