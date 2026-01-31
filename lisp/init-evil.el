@@ -46,6 +46,10 @@
   :straight t
   :hook (after-init . global-evil-surround-mode))
 
+(use-package evil-commentary
+  :straight t
+  :hook (after-init . evil-commentary-mode))
+
 (use-package evil-collection
   :straight t
   :hook (evil-mode . evil-collection-init)
