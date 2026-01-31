@@ -12,6 +12,7 @@
   :init
   (setq evil-disable-insert-state-bindings t)
   (setq evil-want-Y-yank-to-eol t)
+  (setq evil-want-C-u-scroll t)
   :hook (after-init . evil-mode)
   ;; Don't quit Emacs on `:q'.
   ;;
