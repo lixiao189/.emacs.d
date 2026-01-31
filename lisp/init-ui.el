@@ -15,10 +15,17 @@
   :config
   (doom-themes-org-config)
 
-  (let ((theme (if (display-graphic-p)
-                   'doom-one
-                 'doom-Iosvkem)))
-    (load-theme theme t)))
+  (defun auto-change-theme (&optional frame)
+    "Load different theme based on FRAME background mode."
+    (when frame (select-frame frame))
+    (let ((theme (if (eq (frame-parameter nil 'background-mode) 'light)
+                   'doom-oksolar-light
+                   'doom-oksolar-dark)))
+      (mapc #'disable-theme custom-enabled-themes)
+      (load-theme theme t)))
+
+  (add-hook 'after-init-hook #'auto-change-theme)
+  (add-hook 'after-make-frame-functions #'auto-change-theme))
 
 (use-package doom-modeline
   :straight t
