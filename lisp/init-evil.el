@@ -151,7 +151,7 @@ if LOCALLEADER is nil, otherwise \"<localleader>\"."
       "tt" 'tab-bar-switch-to-tab
       "t'" 'tab-bar-switch-to-recent-tab
       "tr" 'tab-bar-rename-tab
-      
+
       ;; project
       "p" 'projectile-command-map
 

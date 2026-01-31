@@ -16,6 +16,10 @@
   :bind (("C-x g"   . magit-status)
          ("C-x M-g" . magit-dispatch)
          ("C-c M-g" . magit-file-dispatch))
+  :config
+  ;; Let leader key (SPC) work in Magit buffers.
+  (define-key magit-mode-map (kbd "SPC") nil)
+  (define-key magit-section-mode-map (kbd "SPC") nil)
   :custom
   (magit-diff-refine-hunk t)
   (magit-diff-paint-whitespace nil)
