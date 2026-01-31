@@ -64,6 +64,7 @@
 (require 'init-git)
 (require 'init-dev)
 (require 'init-dired)
+(require 'init-macos)
 (require 'init-minibuffer)
 
 ;; standalone apps
