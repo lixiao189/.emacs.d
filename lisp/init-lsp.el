@@ -73,6 +73,7 @@
   (eglot-sync-connect 0)
   (eglot-autoshutdown t)
   (eglot-extend-to-xref t)
+  (eglot-report-progress 'messages)
   (eglot-events-buffer-config '(:size 0 :format short))
   (eglot-ignored-server-capabilities '(:documentLinkProvider
                                        :documentOnTypeFormattingProvider
