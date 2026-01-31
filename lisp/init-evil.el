@@ -132,7 +132,7 @@ if LOCALLEADER is nil, otherwise \"<localleader>\"."
       "la" 'eglot-code-actions
       "ld" 'flymake-show-diagnostic
       "lD" 'flymake-show-buffer-diagnostics
-      "lf" 'eglot-format-buffer
+      "lf" '+format-buffer
       "lG" 'xref-find-apropos
       "lr" 'eglot-rename
       "ls" 'consult-imenu

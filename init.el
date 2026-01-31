@@ -61,6 +61,7 @@
 (require 'init-tools)
 (require 'init-evil)
 (require 'init-lsp)
+(require 'lisp-apheleia)
 (require 'init-git)
 (require 'init-dev)
 (require 'init-dired)
