@@ -1,0 +1,27 @@
+;;; init-cpp.el --- Cpp -*- lexical-binding: t -*-
+
+;;; Commentary:
+;;
+
+;;; Code:
+
+(require 'init-funcs)
+
+;; C/C++ Mode
+(use-package cc-mode
+  :init (setq-default c-basic-offset 2))
+
+;; cmake, the de factor build system for C++
+(use-package cmake-mode
+  :straight t
+  :mode (("CMakeLists\\.txt\\'" . cmake-mode)
+         ("\\.cmake\\'"         . cmake-mode)))
+
+;; Extra font locks for cmake
+(use-package cmake-font-lock
+  :straight t
+  :hook (cmake-mode . cmake-font-lock-activate))
+
+(provide 'init-cpp)
+
+;;; init-cpp.el ends here
