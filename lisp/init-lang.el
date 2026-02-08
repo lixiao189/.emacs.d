@@ -49,9 +49,17 @@
   (company-minimum-prefix-length 1)
   (company-backends '(company-capf company-yasnippet)))
 
-(use-package company-box
+(use-package company-posframe
   :straight t
-  :hook (company-mode . company-box-mode))
+  :custom
+  (company-posframe-mode 1)
+  (company-tooltip-minimum-width 40))
+
+(use-package desktop
+  :straight nil
+  :config
+  (push '(company-posframe-mode . nil)
+        desktop-minor-mode-table))
 
 (use-package eglot
   :hook (prog-mode . eglot-ensure)
