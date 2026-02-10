@@ -8,7 +8,7 @@
 (require 'init-funcs)
 
 (use-package evil
-  :straight t
+  :ensure t
   :init
   (setq evil-disable-insert-state-bindings t)
   (setq evil-want-Y-yank-to-eol t)
@@ -43,15 +43,15 @@
   (evil-symbol-word-search t))
 
 (use-package evil-surround
-  :straight t
+  :ensure t
   :hook (after-init . global-evil-surround-mode))
 
 (use-package evil-commentary
-  :straight t
+  :ensure t
   :hook (after-init . evil-commentary-mode))
 
 (use-package evil-collection
-  :straight t
+  :ensure t
   :hook (evil-mode . evil-collection-init)
   :bind (([remap evil-show-marks] . evil-collection-consult-mark)
          ([remap evil-show-jumps] . evil-collection-consult-jump-list))
@@ -66,7 +66,7 @@
 
 ;; evil leader map
 (use-package general
-  :straight t
+  :ensure t
   :after evil
   :config
   (general-evil-setup t)

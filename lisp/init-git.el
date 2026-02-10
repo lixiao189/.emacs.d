@@ -11,7 +11,7 @@
 ;; Explicit binding makes it load lazily although it's the default.
 ;; See `magit-define-global-key-bindings' for more information.
 (use-package magit
-  :straight t
+  :ensure t
   :hook (git-commit-setup . git-commit-turn-on-flyspell)
   :bind (("C-x g"   . magit-status)
          ("C-x M-g" . magit-dispatch)
@@ -28,7 +28,7 @@
 
 ;; NOTE: `diff-hl' depends on `vc'
 (use-package vc
-  :straight nil
+  :ensure nil
   :custom
   (vc-follow-symlinks t)
   (vc-allow-async-revert t)
@@ -37,7 +37,7 @@
 
 ;; Highlight uncommitted changes using VC
 (use-package diff-hl
-  :straight t
+  :ensure t
   :hook ((after-init         . global-diff-hl-mode)
          (dired-mode         . diff-hl-dired-mode-unless-remote)
          (magit-post-refresh . diff-hl-magit-post-refresh))
@@ -50,7 +50,7 @@
 
 ;; Visual diff interface
 (use-package ediff
-  :straight nil
+  :ensure nil
   ;; Restore window config after quitting ediff
   :hook ((ediff-before-setup . ediff-save-window-conf)
          (ediff-quit         . ediff-restore-window-conf))
@@ -71,7 +71,7 @@
 
 ;; Setup gitignore mode
 (use-package conf-mode
-  :straight nil
+  :ensure nil
   :mode (("\\.gitignore\\'"     . conf-unix-mode)
          ("\\.gitconfig\\'"     . conf-unix-mode)
          ("\\.gitattributes\\'" . conf-unix-mode)))

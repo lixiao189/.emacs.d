@@ -6,7 +6,7 @@
 ;;; Code:
 
 (use-package rust-mode
-  :straight t
+  :ensure t
   :mode ("\\.rs\\'" . rust-mode)
   :custom
   (rust-indent-where-clause t)

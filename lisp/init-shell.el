@@ -7,11 +7,11 @@
 
 ;; vterm (faster terminal)
 (use-package vterm
-  :straight t)
+  :ensure t)
 
 ;; vterm-toggle (toggle vterm in bottom side)
 (use-package vterm-toggle
-  :straight t
+  :ensure t
   :after vterm
   :bind ("C-'" . vterm-toggle)
   :config

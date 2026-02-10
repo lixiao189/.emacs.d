@@ -6,7 +6,7 @@
 ;;; Code:
 
 (use-package python
-  :straight nil
+  :ensure nil
   :mode ("\\.py\\'" . python-mode)
   :custom
   (python-shell-dedicated 'project)

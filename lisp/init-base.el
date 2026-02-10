@@ -140,7 +140,7 @@
 
 ;; Highlight parenthesises
 (use-package paren
-  :straight nil
+  :ensure nil
   :hook (after-init . show-paren-mode)
   :custom
   (show-paren-when-point-inside-paren t)
@@ -148,12 +148,12 @@
 
 ;; Auto insert matching pairs
 (use-package elec-pair
-  :straight nil
+  :ensure nil
   :hook (after-init . electric-pair-mode))
 
 ;; Show line/column number and more
 (use-package simple
-  :straight nil
+  :ensure nil
   :custom
   ;; show line/column/filesize in modeline
   (line-number-mode t)
@@ -189,7 +189,7 @@
 
 ;; Type text
 (use-package text-mode
-  :straight nil
+  :ensure nil
   :custom
   ;; better word wrapping for CJK characters
   (word-wrap-by-category t)
@@ -198,12 +198,12 @@
 
 ;; Back to the previous position
 (use-package saveplace
-  :straight nil
+  :ensure nil
   :hook (after-init . save-place-mode))
 
 ;; Highlight current line in GUI
 (use-package hl-line
-  :straight nil
+  :ensure nil
   :when (display-graphic-p)
   :hook (after-init . global-hl-line-mode))
 
@@ -212,7 +212,7 @@
 ;; If we have been idle for `repeat-exit-timeout' seconds, exit the repeated
 ;; state.
 (use-package repeat
-  :straight nil
+  :ensure nil
   :custom
   (repeat-mode t)
   (repeat-exit-timeout 1)
@@ -221,17 +221,17 @@
 ;; Server mode.
 ;; Use emacsclient to connect
 (use-package server
-  :straight nil
+  :ensure nil
   :hook (after-init . server-mode))
 
 ;; Workaround with minified source files
 (use-package so-long
-  :straight nil
+  :ensure nil
   :hook (after-init . global-so-long-mode))
 
 ;; Build regexp with visual feedback
 (use-package re-builder
-  :straight nil
+  :ensure nil
   :commands re-builder
   :bind (:map reb-mode-map
          ("C-c C-k" . reb-quit)
@@ -245,7 +245,7 @@
 ;; gt next-tab
 ;; gT prev-tab
 (use-package tab-bar
-  :straight nil
+  :ensure nil
   :hook (after-init . tab-bar-mode)
   :custom
   (tab-bar-show 1)
@@ -259,7 +259,7 @@
   (tab-bar-tab-name-function 'tab-bar-tab-name-truncated))
 
 (use-package newcomment
-  :straight nil
+  :ensure nil
   :bind ([remap comment-dwim] . comment-or-uncomment)
   :config
   (defun comment-or-uncomment ()
@@ -287,7 +287,7 @@ Else, call `comment-or-uncomment-region' on the current line."
 
 ;; transparent remote access
 (use-package tramp
-  :straight nil
+  :ensure nil
   :defer t
   :custom
   ;; Always use file cache when using tramp
@@ -296,7 +296,7 @@ Else, call `comment-or-uncomment-region' on the current line."
 
 ;; Command line interpreter
 (use-package comint
-  :straight nil
+  :ensure nil
   :bind (:map comint-mode-map
          ([remap kill-region]   . backward-kill-word))
   :custom
@@ -310,7 +310,7 @@ Else, call `comment-or-uncomment-region' on the current line."
 
 ;; Better abbrev expansion
 (use-package hippie-exp
-  :straight nil
+  :ensure nil
   :bind ([remap dabbrev-expand] . hippie-expand)
   :config
   (defun try-expand-tempo (_old)
@@ -337,7 +337,7 @@ Else, call `comment-or-uncomment-region' on the current line."
 
 ;; Needed by `webpaste'
 (use-package browse-url
-  :straight nil
+  :ensure nil
   :custom
   (browse-url-generic-program (or (executable-find "firefox")
                                   (executable-find "chromium")
@@ -351,7 +351,7 @@ Else, call `comment-or-uncomment-region' on the current line."
 ;;
 ;; `sR': switch to saved filter groups
 (use-package ibuffer
-  :straight nil
+  :ensure nil
   :hook (ibuffer-mode . ibuffer-auto-mode)
   :bind ([remap list-buffers] . ibuffer)
   :custom
@@ -409,7 +409,7 @@ Else, call `comment-or-uncomment-region' on the current line."
 (pcase system-type
   ('gnu/linux
    (use-package notifications
-     :straight nil
+     :ensure nil
      :commands notify-send
      :config
      (defalias 'notify-send 'notifications-notify)))
@@ -430,7 +430,7 @@ Else, call `comment-or-uncomment-region' on the current line."
 
 ;; Recently opened files
 (use-package recentf
-  :straight nil
+  :ensure nil
   :hook (after-init . recentf-mode)
   :custom
   (recentf-max-saved-items 300)
@@ -447,7 +447,7 @@ Else, call `comment-or-uncomment-region' on the current line."
                      "COMMIT_EDITMSG\\'")))
 
 (use-package savehist
-  :straight nil
+  :ensure nil
   :hook (after-init . savehist-mode)
   :custom
   (savehist-additional-variables '(mark-ring
@@ -456,12 +456,12 @@ Else, call `comment-or-uncomment-region' on the current line."
 
 ;; Try out emacs package without installing
 (use-package try
-  :straight t
+  :ensure t
   :commands try try-and-refresh)
 
 ;; MacOS specific
 (use-package exec-path-from-shell
-  :straight t
+  :ensure t
   :when (eq system-type 'darwin)
   :hook (after-init . exec-path-from-shell-initialize))
 

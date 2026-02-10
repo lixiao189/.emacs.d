@@ -9,7 +9,7 @@
 
 ;; Apheleia formatting
 (use-package apheleia
-  :straight t)
+  :ensure t)
 
 (defun +format-buffer ()
   "Format current buffer with Apheleia, or fall back to Eglot."
@@ -26,20 +26,13 @@
      (t
       (user-error "No formatter configured (Apheleia or Eglot)")))))
 
-;; The completion engine and lsp client
-(use-package eglot-booster
-  :straight (eglot-booster :type git :host nil :repo "https://github.com/jdtsmith/eglot-booster")
-  :after eglot
-  :config (eglot-booster-mode))
-(setq eglot-booster-io-only t)
-
 ;; The completion engine
 (use-package yasnippet
-  :straight t
+  :ensure t
   :hook (prog-mode . yas-minor-mode))
 
 (use-package corfu
-  :straight t
+  :ensure t
   :custom
   (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
   (corfu-preview-current nil)    ;; Disable current candidate preview
@@ -60,14 +53,14 @@
 
 ;; A few more useful configurations...
 (use-package emacs
-  :straight nil
+  :ensure nil
   :custom
   (tab-always-indent 'complete)
   (text-mode-ispell-word-completion nil)
   (read-extended-command-predicate #'command-completion-default-include-p))
 
 (use-package kind-icon
-  :straight t
+  :ensure t
   :ensure t
   :after corfu
   :custom
@@ -101,14 +94,14 @@
 
 ;; The unified debugger
 (use-package gud
-  :straight nil
+  :ensure nil
   :hook (gud-mode . gud-tooltip-mode)
   :custom
   (gud-highlight-current-line t))
 
 ;; GDB specific config
 (use-package gdb-mi
-  :straight nil
+  :ensure nil
   :commands gdb
   :custom
   (gdb-show-main t)
@@ -121,13 +114,13 @@
 
 ;; #number can be clickable.
 (use-package bug-reference
-  :straight nil
+  :ensure nil
   :bind (:map bug-reference-map
          ("C-c C-o" . bug-reference-push-button)))
 
 ;; Highlight TODO
 (use-package hl-todo
-  :straight t
+  :ensure t
   :hook (after-init . global-hl-todo-mode)
   :bind (:map hl-todo-mode-map
          ("C-c t p" . hl-todo-previous)
@@ -138,14 +131,14 @@
 
 ;; Show trailing whitespaces
 (use-package whitespace
-  :straight nil
+  :ensure nil
   :hook ((prog-mode markdown-mode conf-mode) . whitespace-mode)
   :custom
   (whitespace-style '(face trailing)))
 
 ;; Project management
 (use-package projectile
-  :straight t
+  :ensure t
   :hook (after-init . projectile-mode)
   :bind (:map projectile-mode-map
          ("C-c p" . projectile-command-map))
@@ -168,7 +161,7 @@
 
 ;; xref
 (use-package xref
-  :straight nil
+  :ensure nil
   :hook ((xref-after-return xref-after-jump) . recenter)
   :custom
   ;; Emacs 28+
@@ -190,7 +183,7 @@
 ;; zo show-block
 ;; zc hide-block
 (use-package hideshow
-  :straight nil
+  :ensure nil
   :hook (prog-mode . hs-minor-mode)
   :custom
   (hs-show-indicators t)
@@ -199,7 +192,7 @@
   (hs-hide-comments-when-hiding-all nil))
 
 (use-package treesit
-  :straight nil
+  :ensure nil
   :config
   (setq treesit-language-source-alist
         '((c . ("https://github.com/tree-sitter/tree-sitter-c"))

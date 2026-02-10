@@ -7,7 +7,7 @@
 
 ;; JavaScript
 (use-package js
-  :straight nil
+  :ensure nil
   :mode ("\\.js\\'" . js-mode)
   :custom
   (js-indent-level 2)
@@ -20,7 +20,7 @@
 
 ;; JSON
 (use-package json-mode
-  :straight t
+  :ensure t
   :mode "\\.json\\'"
   :config
   (with-eval-after-load 'apheleia

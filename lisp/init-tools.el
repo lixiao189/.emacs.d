@@ -7,7 +7,7 @@
 
 ;; Tips for next keystroke
 (use-package which-key
-  :straight t
+  :ensure t
   :hook (after-init . which-key-mode)
   :config
   (which-key-add-key-based-replacements
@@ -28,12 +28,12 @@
 ;;
 ;; Press C-c s to search
 (use-package rg
-  :straight t
+  :ensure t
   :hook (after-init . rg-enable-default-bindings))
 
 ;; Jump to arbitrary positions
 (use-package avy
-  :straight t
+  :ensure t
   ;; integrate with isearch and others
   ;; C-' to select isearch-candidate with avy
   :hook (after-init . avy-setup-default)
@@ -56,7 +56,7 @@
 
 ;; The builtin incremental search
 (use-package isearch
-  :straight nil
+  :ensure nil
   :bind (:map isearch-mode-map
          ;; consistent with ivy-occur
          ("C-c C-o"                   . isearch-occur)
@@ -87,14 +87,14 @@
 
 ;; Writable grep buffer
 (use-package wgrep
-  :straight t
+  :ensure t
   :hook (grep-setup . wgrep-setup)
   :custom
   (wgrep-change-readonly-file t))
 
 ;; GC optimization
 (use-package gcmh
-  :straight t
+  :ensure t
   :hook (after-init . gcmh-mode)
   :custom
   (gcmh-idle-delay 10)
@@ -102,7 +102,7 @@
 
 ;; Write documentation comment in an easy way
 (use-package separedit
-  :straight t
+  :ensure t
   :bind (:map prog-mode-map
          ("C-c '" . separedit))
   :custom
@@ -113,7 +113,7 @@
 
 ;; Universal menus
 (use-package transient
-  :straight nil
+  :ensure nil
   :bind (("C-c h o" . scroll-other-window-menu)
          ("C-c h t" . background-opacity-menu))
   :config

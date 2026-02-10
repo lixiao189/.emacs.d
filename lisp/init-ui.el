@@ -11,24 +11,13 @@
 
 ;; Use Iosvkem in terminals
 (use-package doom-themes
-  :straight t
+  :ensure t
   :config
   (doom-themes-org-config)
-
-  (defun auto-change-theme (&optional frame)
-    "Load different theme based on FRAME background mode."
-    (when frame (select-frame frame))
-    (let ((theme (if (eq (frame-parameter nil 'background-mode) 'light)
-                   'doom-oksolar-light
-                   'doom-oksolar-dark)))
-      (mapc #'disable-theme custom-enabled-themes)
-      (load-theme theme t)))
-
-  (add-hook 'after-init-hook #'auto-change-theme)
-  (add-hook 'after-make-frame-functions #'auto-change-theme))
+  (load-theme 'doom-oksolar-dark t))
 
 (use-package doom-modeline
-  :straight t
+  :ensure t
   :hook (after-init . doom-modeline-mode)
   :custom
   (doom-modeline-irc nil)
@@ -41,7 +30,7 @@
 
 ;; Customize popwin behavior
 (use-package shackle
-  :straight t
+  :ensure t
   :hook (after-init . shackle-mode)
   :custom
   (shackle-default-size 0.5)
@@ -65,7 +54,7 @@
                    ("\\*eldoc\\( for \\)?.*\\*" :select t   :align t :size 15 :regexp t))))
 
 (use-package help
-  :straight nil
+  :ensure nil
   :custom
   (help-window-select t)
   (help-window-keep-selected t)
@@ -76,13 +65,13 @@
 ;; You can still use `winner-mode' on Emacs 26 or early. On Emacs 27, it's
 ;; preferred over `winner-mode' for better compatibility with `tab-bar-mode'.
 (use-package tab-bar
-  :straight nil
+  :ensure nil
   :hook (after-init . tab-bar-history-mode)
   :custom
   (tab-bar-history-buttons-show nil))
 
 (use-package nerd-icons
-  :straight t
+  :ensure t
   :when (display-graphic-p)
   :demand t)
 

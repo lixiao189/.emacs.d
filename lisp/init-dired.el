@@ -7,7 +7,7 @@
 
 ;; Use ( to toggle dired-hide-details-mode
 (use-package dired
-  :straight nil
+  :ensure nil
   :bind (:map dired-mode-map
          ;; consistent with ivy
          ("C-c C-e"   . wdired-change-to-wdired-mode))
@@ -22,7 +22,7 @@
   (dired-listing-switches "-AFhlv"))
 
 (use-package dired-aux
-  :straight nil
+  :ensure nil
   :after dired
   :config
   (with-no-warnings
@@ -44,7 +44,7 @@
   (dired-create-destination-dirs 'ask))
 
 (use-package dired-x
-  :straight nil
+  :ensure nil
   :hook (dired-mode . dired-omit-mode)
   :custom
   (dired-omit-verbose nil)
@@ -73,7 +73,7 @@
 
 ;; Make dired colorful
 (use-package diredfl
-  :straight t
+  :ensure t
   :hook (dired-mode . diredfl-mode))
 
 (provide 'init-dired)

@@ -7,7 +7,7 @@
 
 ;; Completion engine
 (use-package minibuffer
-  :straight nil
+  :ensure nil
   :bind (:map minibuffer-local-map
          ([escape] . abort-recursive-edit)
          :map minibuffer-local-ns-map
@@ -38,11 +38,11 @@
 
 ;; Persist minibuffer history (used by vertico-repeat and consult)
 (use-package savehist
-  :straight t
+  :ensure t
   :hook (after-init . savehist-mode))
 
 (use-package vertico
-  :straight t
+  :ensure t
   :hook ((after-init . vertico-mode)
          (minibuffer-setup . vertico-repeat-save))
   :custom
@@ -51,14 +51,14 @@
 
 ;; Orderless: powerful completion style for flexible matching
 (use-package orderless
-  :straight t
+  :ensure t
   :custom
   (completion-styles '(orderless basic))
   (completion-category-defaults nil)
   (completion-category-overrides '((file (styles partial-completion)))))
 
 (use-package embark
-  :straight t
+  :ensure t
   :init
   (setq prefix-help-command #'embark-prefix-help-command)
   :bind (:map minibuffer-local-map
@@ -67,7 +67,7 @@
          ("C-c C-o" . embark-collect)))
 
 (use-package consult
-  :straight t
+  :ensure t
   :bind (([remap imenu]                  . consult-imenu)
          ([remap yank-pop]               . consult-yank-pop)
          ([remap goto-line]              . consult-goto-line)
@@ -104,11 +104,11 @@
 
 ;; Consult users will also want the embark-consult package.
 (use-package embark-consult
-  :straight t
+  :ensure t
   :hook (embark-collect-mode . consult-preview-at-point-mode))
 
 (use-package marginalia
-  :straight t
+  :ensure t
   :hook (after-init . marginalia-mode))
 
 (provide 'init-minibuffer)
