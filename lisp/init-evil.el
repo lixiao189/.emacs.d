@@ -103,9 +103,9 @@
     "ld" '(flymake-show-diagnostic :which-key "diagnostic")
     "lD" '(flymake-show-buffer-diagnostics :which-key "buffer diags")
     "lf" '(+format-buffer :which-key "format")
-    "lG" '(xref-find-apropos :which-key "apropos")
+    "lG" '(xref-find-apropos :which-key "workspace symbols")
     "lr" '(eglot-rename :which-key "rename")
-    "ls" '(consult-imenu :which-key "imenu")
+    "ls" '(consult-imenu :which-key "buffer symbols")
 
     "t" '(:ignore t :which-key "tab")
     "tc" '(tab-bar-close-tab :which-key "close tab")
