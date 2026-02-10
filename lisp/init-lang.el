@@ -38,20 +38,42 @@
   :straight t
   :hook (prog-mode . yas-minor-mode))
 
-(use-package company
+(use-package corfu
   :straight t
-  :hook (prog-mode . company-mode)
-  :bind (:map company-mode-map
-         ([remap completion-at-point] . company-complete))
   :custom
-  ;; Best-practice, low-overhead defaults for LSP/Capf-based completion.
-  (company-idle-delay 0.0)
-  (company-minimum-prefix-length 1)
-  (company-backends '(company-capf company-yasnippet)))
+  (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
+  (corfu-preview-current nil)    ;; Disable current candidate preview
+  (corfu-auto t)
+  (corfu-auto-delay 0.2)
+  (corfu-auto-trigger ".")
+  (corfu-quit-no-match 'separator)
 
-(use-package company-box
+  ;; Enable Corfu only for certain modes. See also `global-corfu-modes'.
+  :hook ((prog-mode . corfu-mode)
+         (shell-mode . corfu-mode)
+         (eshell-mode . corfu-mode))
+
+  :init
+  ;; Enable optional extension modes:
+  (corfu-history-mode)
+  (corfu-popupinfo-mode))
+
+;; A few more useful configurations...
+(use-package emacs
+  :straight nil
+  :custom
+  (tab-always-indent 'complete)
+  (text-mode-ispell-word-completion nil)
+  (read-extended-command-predicate #'command-completion-default-include-p))
+
+(use-package kind-icon
   :straight t
-  :hook (company-mode . company-box-mode))
+  :ensure t
+  :after corfu
+  :custom
+  (kind-icon-use-icons nil)
+  :config
+  (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
 
 (use-package eglot
   :hook (prog-mode . eglot-ensure)
