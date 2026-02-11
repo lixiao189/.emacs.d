@@ -118,8 +118,6 @@
     "t'" '(tab-bar-switch-to-recent-tab :which-key "recent tab")
     "tr" '(tab-bar-rename-tab :which-key "rename tab")
 
-    "p" '(projectile-command-map :which-key "project")
-
     "g" '(:ignore t :which-key "git")
     "gr" '(diff-hl-revert-hunk :which-key "revert hunk")
     "gR" '(vc-revert :which-key "vc revert")

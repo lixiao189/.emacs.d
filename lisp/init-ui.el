@@ -35,10 +35,8 @@
   (dashboard-set-heading-icons t)
   (dashboard-set-file-icons t)
 
-  (dashboard-projects-backend 'projectile)
   (dashboard-items '((recents   . 8)
-                     (projects  . 5)
-                     (bookmarks . 5))))
+                     (bookmarks . 8))))
 
 (use-package doom-modeline
   :ensure t

@@ -141,24 +141,6 @@
   :custom
   (whitespace-style '(face trailing)))
 
-;; Project management
-(use-package projectile
-  :ensure t
-  :hook (after-init . projectile-mode)
-  :custom
-  (projectile-completion-system 'default)
-  (projectile-switch-project-action 'projectile-dired)
-  (projectile-use-git-grep t)
-  (projectile-indexing-method 'alien)
-  (projectile-kill-buffers-filter 'kill-only-files)
-  ;; Ignore uninteresting files. It has no effect when using alien mode.
-  (projectile-globally-ignored-files '("TAGS" "tags" ".DS_Store"))
-  (projectile-globally-ignored-file-suffixes '(".elc" ".pyc" ".o" ".swp" ".so" ".a"))
-  (projectile-ignored-projects `("~/"
-                                 "/tmp/"
-                                 "/private/tmp/"
-                                 , package-user-dir)))
-
 ;; xref
 (use-package xref
   :ensure nil
