@@ -191,15 +191,6 @@
   (hs-indicator-type (if (display-graphic-p) 'fringe 'margin))
   (hs-hide-comments-when-hiding-all nil))
 
-(use-package treesit
-  :ensure nil
-  :config
-  (setq treesit-language-source-alist
-        '((c . ("https://github.com/tree-sitter/tree-sitter-c"))
-          (cpp . ("https://github.com/tree-sitter/tree-sitter-cpp"))
-          (json . ("https://github.com/tree-sitter/tree-sitter-json"))
-          (rust . ("https://github.com/tree-sitter/tree-sitter-rust")))))
-
 (require 'init-cpp)
 (require 'init-rust)
 (require 'init-python)

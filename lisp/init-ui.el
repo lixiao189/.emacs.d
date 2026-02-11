@@ -6,8 +6,12 @@
 ;;; Code:
 
 ;; relative number
-(global-display-line-numbers-mode t)
-(setq display-line-numbers-type 'visual)
+(use-package display-line-numbers
+  :ensure nil
+  :custom
+  (display-line-numbers-type 'visual)
+  :hook ((prog-mode . display-line-numbers-mode)
+         (text-mode . display-line-numbers-mode)))
 
 ;; Use Iosvkem in terminals
 (use-package doom-themes
