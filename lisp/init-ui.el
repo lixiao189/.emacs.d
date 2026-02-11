@@ -37,7 +37,8 @@
 
   (dashboard-projects-backend 'projectile)
   (dashboard-items '((recents   . 8)
-                     (projects  . 8))))
+                     (projects  . 5)
+                     (bookmarks . 5))))
 
 (use-package doom-modeline
   :ensure t

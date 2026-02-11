@@ -7,7 +7,6 @@
 
 (use-package python
   :ensure nil
-  :mode ("\\.py\\'" . python-mode)
   :custom
   (python-shell-dedicated 'project)
   (python-indent-guess-indent-offset-verbose nil)
@@ -18,7 +17,7 @@
   (with-eval-after-load 'eglot
     ;; Use ty as the Python language server.
     (add-to-list 'eglot-server-programs
-                 '((python-mode python-ts-mode) . ("ty" "server")))))
+                 '((python-mode python-ts-mode) . ("pyrefly" "lsp")))))
 
 (provide 'init-python)
 ;;; init-python.el ends here
