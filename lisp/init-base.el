@@ -20,15 +20,6 @@
 (setq global-auto-revert-non-file-buffers t)
 (setq auto-revert-verbose nil)
 
-;; Start with *scratch* buffer
-(setq initial-buffer-choice t)
-
-;; Use text-mode for *scratch* buffer instead of lisp-interaction-mode
-(setq initial-major-mode 'text-mode)
-
-;; Remove default message in *scratch* buffer
-(setq initial-scratch-message nil)
-
 ;; Pixelwise resize
 (setq window-resize-pixelwise t
       frame-resize-pixelwise t)
