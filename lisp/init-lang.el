@@ -145,14 +145,9 @@
 (use-package projectile
   :ensure t
   :hook (after-init . projectile-mode)
-  :bind (:map projectile-mode-map
-         ("C-c p" . projectile-command-map))
-  :config
-  (dolist (dir '("bazel-bin"
-                 "bazel-out"
-                 "bazel-testlogs"))
-    (add-to-list 'projectile-globally-ignored-directories dir))
   :custom
+  (projectile-completion-system 'default)
+  (projectile-switch-project-action 'projectile-dired)
   (projectile-use-git-grep t)
   (projectile-indexing-method 'alien)
   (projectile-kill-buffers-filter 'kill-only-files)
@@ -162,7 +157,7 @@
   (projectile-ignored-projects `("~/"
                                  "/tmp/"
                                  "/private/tmp/"
-                                 ,(expand-file-name "straight/" user-emacs-directory))))
+                                 , package-user-dir)))
 
 ;; xref
 (use-package xref

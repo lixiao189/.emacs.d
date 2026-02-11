@@ -16,6 +16,25 @@
   (doom-themes-org-config)
   (load-theme 'doom-oksolar-dark t))
 
+;; Dashboard install
+(use-package dashboard
+  :ensure t
+  :hook (server-after-make-frame . dashboard-refresh-buffer)
+  :config
+  (dashboard-setup-startup-hook)
+  :custom
+  ;; Show Dashboard in frames created with emacsclient -c
+  (initial-buffer-choice 'dashboard-open)
+  ;; icons
+  (dashboard-display-icons-p t)
+  (dashboard-icon-type 'nerd-icons)
+  (dashboard-set-heading-icons t)
+  (dashboard-set-file-icons t)
+
+  (dashboard-projects-backend 'projectile)
+  (dashboard-items '((recents   . 8)
+                     (projects  . 8))))
+
 (use-package doom-modeline
   :ensure t
   :hook (after-init . doom-modeline-mode)
