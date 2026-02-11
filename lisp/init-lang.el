@@ -38,13 +38,18 @@
   (corfu-preview-current nil)    ;; Disable current candidate preview
   (corfu-auto t)
   (corfu-auto-delay 0.2)
+  (corfu-auto-prefix 2)
   (corfu-auto-trigger ".")
   (corfu-quit-no-match 'separator)
 
   ;; Enable Corfu only for certain modes. See also `global-corfu-modes'.
   :hook ((prog-mode . corfu-mode)
          (shell-mode . corfu-mode)
-         (eshell-mode . corfu-mode))
+         (eshell-mode . corfu-mode)
+         (corfu-mode . (lambda ()
+                       (setq-local completion-styles '(basic))
+                       (setq-local completion-category-defaults nil)
+                       (setq-local completion-category-overrides nil))))
 
   :init
   ;; Enable optional extension modes:

@@ -129,6 +129,15 @@
 (when (fboundp 'set-scroll-bar-mode)
   (set-scroll-bar-mode nil))
 
+;; Garbage Collector Magic Hack
+(use-package gcmh
+  :ensure t
+  :diminish
+  :hook (emacs-startup . gcmh-mode)
+  :init (setq gcmh-idle-delay 'auto
+              gcmh-auto-idle-delay-factor 10
+              gcmh-high-cons-threshold #x4000000)) ; 64MB
+
 ;; Highlight parenthesises
 (use-package paren
   :ensure nil
