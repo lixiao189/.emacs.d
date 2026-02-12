@@ -17,7 +17,7 @@ brew install bun
 
 ``` bash
 # python
-uv tool install ty
+uv tool install pyrefly
 uv tool install ruff
 
 # c++
