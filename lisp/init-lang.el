@@ -7,6 +7,15 @@
 
 (require 'init-funcs)
 
+(use-package eglot-booster
+  :after eglot
+  :vc (:url "https://github.com/jdtsmith/eglot-booster"
+       :rev :newest)
+  :config
+  (eglot-booster-mode)
+  :custom
+  (eglot-booster-io-only t))
+
 ;; Apheleia formatting
 (use-package apheleia
   :ensure t)
