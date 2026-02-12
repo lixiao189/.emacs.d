@@ -18,7 +18,9 @@
 
 ;; Apheleia formatting
 (use-package apheleia
-  :ensure t)
+  :ensure t
+  :custom
+  (apheleia-mode-alist nil))
 
 (defun +format-buffer ()
   "Format current buffer with Apheleia, or fall back to Eglot."
