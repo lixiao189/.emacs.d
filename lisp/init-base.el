@@ -293,7 +293,9 @@ Else, call `comment-or-uncomment-region' on the current line."
   :custom
   ;; Always use file cache when using tramp
   (remote-file-name-inhibit-cache nil)
-  (tramp-default-method "ssh"))
+  :config
+  ;; Use remote server's path
+  (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
 
 ;; Command line interpreter
 (use-package comint
