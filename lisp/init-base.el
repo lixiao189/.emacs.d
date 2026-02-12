@@ -235,9 +235,9 @@
   :ensure nil
   :commands re-builder
   :bind (:map reb-mode-map
-         ("C-c C-k" . reb-quit)
-         ("C-c C-p" . reb-prev-match)
-         ("C-c C-n" . reb-next-match))
+              ("C-c C-k" . reb-quit)
+              ("C-c C-p" . reb-prev-match)
+              ("C-c C-n" . reb-next-match))
   :custom
   (reb-re-syntax 'string))
 
@@ -291,17 +291,30 @@ Else, call `comment-or-uncomment-region' on the current line."
   :ensure nil
   :defer t
   :custom
-  ;; Always use file cache when using tramp
+  ;; Better performance
   (remote-file-name-inhibit-cache nil)
+  (remote-file-name-inhibit-locks t)
+  (tramp-use-scp-direct-remote-copying t)
+  (remote-file-name-inhibit-auto-save-visited t)
+  (tramp-copy-size-limit (* 1024 1024))
+  (tramp-verbose 2)
   :config
   ;; Use remote server's path
-  (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
+  (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
+
+  ;; Use direct async
+  (connection-local-set-profile-variables
+   'remote-direct-async-process
+   '((tramp-direct-async-process . t)))
+  (connection-local-set-profiles
+   '(:application tramp :protocol "scp")
+   'remote-direct-async-process))
 
 ;; Command line interpreter
 (use-package comint
   :ensure nil
   :bind (:map comint-mode-map
-         ([remap kill-region]   . backward-kill-word))
+              ([remap kill-region]   . backward-kill-word))
   :custom
   ;; No paging, `eshell' and `shell' will honoring.
   (comint-pager "cat")

@@ -21,9 +21,11 @@
   (define-key magit-mode-map (kbd "SPC") nil)
   (define-key magit-section-mode-map (kbd "SPC") nil)
   :custom
+  (magit-tramp-pipe-stty-settings 'pty) ;; Fix tramp direct async's error
   (magit-diff-refine-hunk t)
   (magit-diff-paint-whitespace nil)
   (magit-ediff-dwim-show-on-hunks t)
+  (magit-commit-show-diff nil) ;; Don't show the diff by default in the commit buffer
   (magit-display-buffer-function 'magit-display-buffer-same-window-except-diff-v1))
 
 ;; NOTE: `diff-hl' depends on `vc'
