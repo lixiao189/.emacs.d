@@ -292,7 +292,6 @@ Else, call `comment-or-uncomment-region' on the current line."
   :defer t
   :custom
   ;; Better performance
-  (remote-file-name-inhibit-cache nil)
   (remote-file-name-inhibit-locks t)
   (tramp-use-scp-direct-remote-copying t)
   (remote-file-name-inhibit-auto-save-visited t)
