@@ -20,7 +20,8 @@
 (use-package apheleia
   :ensure t
   :custom
-  (apheleia-mode-alist nil))
+  (apheleia-mode-alist nil)
+  (apheleia-remote-algorithm 'remote))
 
 (defun +format-buffer ()
   "Format current buffer with Apheleia, or fall back to Eglot."
