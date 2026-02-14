@@ -50,7 +50,7 @@
   (corfu-preview-current nil)    ;; Disable current candidate preview
   (corfu-auto t)
   (corfu-auto-delay 0.2)
-  (corfu-auto-prefix 2)
+  (corfu-auto-prefix 1)
   (corfu-auto-trigger ".")
   (corfu-quit-no-match 'separator)
 
@@ -102,7 +102,7 @@
   (eglot-autoshutdown t)
   (eglot-extend-to-xref t)
   (eglot-report-progress 'messages)
-  (eglot-events-buffer-config '(:size 0 :format short))
+  (eglot-events-buffer-config '(:size 1 :format short))
   (eglot-ignored-server-capabilities '(:documentLinkProvider
                                        :documentOnTypeFormattingProvider
                                        :colorProvider

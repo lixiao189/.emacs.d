@@ -17,7 +17,7 @@
   (with-eval-after-load 'eglot
     ;; Use ty as the Python language server.
     (add-to-list 'eglot-server-programs
-                 '((python-mode python-ts-mode) . ("basedpyright-langserver" "--stdio")))))
+                 '((python-mode python-ts-mode) . ("ty" "server")))))
 
 (provide 'init-python)
 ;;; init-python.el ends here
