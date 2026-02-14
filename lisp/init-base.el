@@ -133,10 +133,9 @@
 (use-package gcmh
   :ensure t
   :diminish
-  :hook (emacs-startup . gcmh-mode)
-  :init (setq gcmh-idle-delay 'auto
-              gcmh-auto-idle-delay-factor 10
-              gcmh-high-cons-threshold #x4000000)) ; 64MB
+  :demand t
+  :config
+  (gcmh-mode 1))
 
 ;; Highlight parenthesises
 (use-package paren
