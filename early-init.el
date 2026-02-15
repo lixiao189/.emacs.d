@@ -10,6 +10,9 @@
           gc-cons-percentage 1.0)
   (setq gc-cons-threshold most-positive-fixnum))
 
+;; Use plist in lsp mode
+(setenv "LSP_USE_PLISTS" "true")
+
 ;; Faster to disable these here (before they've been initialized)
 (push '(width . 160) default-frame-alist)
 (push '(height . 60) default-frame-alist)
