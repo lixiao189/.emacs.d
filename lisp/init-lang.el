@@ -39,6 +39,7 @@
   :custom
   (company-idle-delay 0.0)
   (company-minimum-prefix-length 1)
+  (company-tooltip-maximum-width 80)
   (company-backends '((company-capf company-yasnippet)
                       company-files))
   :hook ((prog-mode . company-mode)
