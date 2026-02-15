@@ -49,7 +49,7 @@
   (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
   (corfu-preview-current nil)    ;; Disable current candidate preview
   (corfu-auto t)
-  (corfu-auto-delay 0.2)
+  (corfu-auto-delay 0.0)
   (corfu-auto-prefix 1)
   (corfu-auto-trigger ".")
   (corfu-quit-no-match 'separator)
@@ -75,15 +75,6 @@
   (tab-always-indent 'complete)
   (text-mode-ispell-word-completion nil)
   (read-extended-command-predicate #'command-completion-default-include-p))
-
-(use-package kind-icon
-  :ensure t
-  :ensure t
-  :after corfu
-  :custom
-  (kind-icon-use-icons nil)
-  :config
-  (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
 
 (use-package eglot
   :hook (prog-mode . eglot-ensure)
@@ -184,6 +175,18 @@
   (hs-display-lines-hidden t)
   (hs-indicator-type (if (display-graphic-p) 'fringe 'margin))
   (hs-hide-comments-when-hiding-all nil))
+
+;; Tree-sitter auto mode with automatic grammar installation
+(use-package treesit-auto
+  :ensure t
+  :demand t
+  :custom
+  ;; Automatically install grammars when missing
+  (treesit-auto-install 'prompt)
+  :config
+  ;; Enable global treesit-auto mode
+  (treesit-auto-add-to-auto-mode-alist 'all)
+  (global-treesit-auto-mode))
 
 (require 'init-cpp)
 (require 'init-rust)
