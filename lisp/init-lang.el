@@ -34,38 +34,20 @@
   :ensure t
   :hook (prog-mode . yas-minor-mode))
 
-(use-package corfu
+(use-package company
   :ensure t
   :custom
-  (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
-  (corfu-preview-current nil)    ;; Disable current candidate preview
-  (corfu-auto t)
-  (corfu-auto-delay 0.0)
-  (corfu-auto-prefix 1)
-  (corfu-auto-trigger ".")
-  (corfu-quit-no-match 'separator)
+  (company-idle-delay 0.0)
+  (company-minimum-prefix-length 1)
+  (company-backends '((company-capf company-yasnippet)
+                      company-files))
+  :hook ((prog-mode . company-mode)
+         (shell-mode . company-mode)
+         (eshell-mode . company-mode)))
 
-  ;; Enable Corfu only for certain modes. See also `global-corfu-modes'.
-  :hook ((prog-mode . corfu-mode)
-         (shell-mode . corfu-mode)
-         (eshell-mode . corfu-mode)
-         (corfu-mode . (lambda ()
-                       (setq-local completion-styles '(basic))
-                       (setq-local completion-category-defaults nil)
-                       (setq-local completion-category-overrides nil))))
-
-  :init
-  ;; Enable optional extension modes:
-  (corfu-history-mode)
-  (corfu-popupinfo-mode))
-
-;; A few more useful configurations...
-(use-package emacs
-  :ensure nil
-  :custom
-  (tab-always-indent 'complete)
-  (text-mode-ispell-word-completion nil)
-  (read-extended-command-predicate #'command-completion-default-include-p))
+(use-package company-box
+  :ensure t
+  :hook (company-mode . company-box-mode))
 
 (use-package lsp-mode
   :ensure t
