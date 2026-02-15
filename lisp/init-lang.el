@@ -154,10 +154,8 @@
   :demand t
   :custom
   ;; Automatically install grammars when missing
-  (treesit-auto-install 'prompt)
+  (treesit-auto-install 't)
   :config
-  ;; Enable global treesit-auto mode
-  (treesit-auto-add-to-auto-mode-alist 'all)
   (global-treesit-auto-mode))
 
 (require 'init-cpp)
