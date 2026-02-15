@@ -41,6 +41,7 @@
 (use-package diff-hl
   :ensure t
   :hook ((after-init         . global-diff-hl-mode)
+         (after-init         . diff-hl-flydiff-mode)
          (dired-mode         . diff-hl-dired-mode-unless-remote)
          (magit-post-refresh . diff-hl-magit-post-refresh))
   :config

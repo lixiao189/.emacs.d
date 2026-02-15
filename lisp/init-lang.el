@@ -58,6 +58,7 @@
   (lsp-semantic-tokens-enable nil)
   (lsp-diagnostics-provider :flymake)
   (lsp-keep-workspace-alive nil)
+  (lsp-warn-no-matched-clients nil)
   (lsp-enable-on-type-formatting nil)
 
   ;; Performance
