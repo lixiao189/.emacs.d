@@ -145,6 +145,13 @@
   (general-define-key
    :states '(normal)
    :keymaps 'override
+   "g a" #'lsp-execute-code-action
+   "g D" #'lsp-find-declaration
+   "g d" #'lsp-find-definition
+   "g i" #'lsp-find-implementation
+   "g r" #'lsp-find-references
+   "g y" #'lsp-find-type-definition
+   "K" #'lsp-describe-thing-at-point
    "]d" #'flymake-goto-next-error
    "[d" #'flymake-goto-prev-error
    "]g" #'diff-hl-next-hunk
