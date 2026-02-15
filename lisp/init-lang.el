@@ -7,15 +7,6 @@
 
 (require 'init-funcs)
 
-(use-package eglot-booster
-  :after eglot
-  :vc (:url "https://github.com/jdtsmith/eglot-booster"
-       :rev :newest)
-  :config
-  (eglot-booster-mode)
-  :custom
-  (eglot-booster-io-only t))
-
 ;; Apheleia formatting
 (use-package apheleia
   :ensure t
@@ -24,7 +15,7 @@
   (apheleia-remote-algorithm 'remote))
 
 (defun +format-buffer ()
-  "Format current buffer with Apheleia, or fall back to Eglot."
+  "Format current buffer with Apheleia, or fall back to lsp-mode."
   (interactive)
   (require 'apheleia)
   (let ((formatters (apheleia--get-formatters)))
@@ -32,11 +23,11 @@
      (formatters
       (apheleia-format-buffer formatters))
      ((progn
-        (require 'eglot nil t)
-        (fboundp 'eglot-format-buffer))
-      (eglot-format-buffer))
+        (require 'lsp-mode nil t)
+        (fboundp 'lsp-format-buffer))
+      (lsp-format-buffer))
      (t
-      (user-error "No formatter configured (Apheleia or Eglot)")))))
+      (user-error "No formatter configured (Apheleia or lsp-mode)")))))
 
 ;; The completion engine
 (use-package yasnippet
@@ -76,29 +67,20 @@
   (text-mode-ispell-word-completion nil)
   (read-extended-command-predicate #'command-completion-default-include-p))
 
-(use-package eglot
-  :hook (prog-mode . eglot-ensure)
-  :config
-  (defvar-keymap eglot-command-map
-    :prefix 'eglot-command-map
-    ;; goto
-    "g a" #'xref-find-apropos
-    "g D" #'eglot-find-declaration
-    "g d" #'xref-find-definitions
-    "g i" #'eglot-find-implementation
-    "g r" #'xref-find-references
-    "g y" #'eglot-find-typeDefinition)
+(use-package lsp-mode
+  :ensure t
+  :hook (prog-mode . lsp-deferred)
   :custom
-  (eglot-sync-connect 0)
-  (eglot-autoshutdown t)
-  (eglot-extend-to-xref t)
-  (eglot-report-progress 'messages)
-  (eglot-events-buffer-config '(:size 1 :format short))
-  (eglot-ignored-server-capabilities '(:documentLinkProvider
-                                       :documentOnTypeFormattingProvider
-                                       :colorProvider
-                                       :inlayHintProvider
-                                       :semanticTokensProvider)))
+  (lsp-enable-symbol-highlighting nil)
+  (lsp-headerline-breadcrumb-enable nil)
+  (lsp-semantic-tokens-enable nil)
+  (lsp-diagnostics-provider :flymake)
+  (lsp-keep-workspace-alive nil)
+  (lsp-enable-on-type-formatting nil)
+
+  ;; Performance
+  (lsp-idle-delay 0.5)
+  (setq lsp-log-io nil))
 
 ;; The unified debugger
 (use-package gud

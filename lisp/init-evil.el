@@ -99,12 +99,12 @@
     "c" '(kill-current-buffer :which-key "kill buffer")
 
     "l" '(:ignore t :which-key "language")
-    "la" '(eglot-code-actions :which-key "code actions")
+    "la" '(lsp-execute-code-action :which-key "code actions")
     "ld" '(flymake-show-diagnostic :which-key "diagnostic")
     "lD" '(flymake-show-buffer-diagnostics :which-key "buffer diags")
     "lf" '(+format-buffer :which-key "format")
     "lG" '(xref-find-apropos :which-key "workspace symbols")
-    "lr" '(eglot-rename :which-key "rename")
+    "lr" '(lsp-rename :which-key "rename")
     "ls" '(consult-imenu :which-key "buffer symbols")
 
     "t" '(:ignore t :which-key "tab")
@@ -129,6 +129,11 @@
     "ac" '(calendar :which-key "calendar")
     "ag" '(gnus :which-key "gnus")
     "ai" '(rcirc :which-key "irc")
+
+    "p" '(:ignore t :which-key "profiler")
+    "ps" '(profiler-start :which-key "start")
+    "pS" '(profiler-stop :which-key "stop")
+    "pr" '(profiler-report :which-key "report")
 
     "o" '(:ignore t :which-key "open")
     "oc" '(org-capture :which-key "capture")
