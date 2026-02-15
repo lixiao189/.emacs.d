@@ -100,8 +100,8 @@
 
     "l" '(:ignore t :which-key "language")
     "la" '(lsp-execute-code-action :which-key "code actions")
-    "ld" '(flymake-show-diagnostic :which-key "diagnostic")
-    "lD" '(flymake-show-buffer-diagnostics :which-key "buffer diags")
+    "ld" '(flycheck-display-error-at-point :which-key "diagnostic")
+    "lD" '(flycheck-list-errors :which-key "buffer diags")
     "lf" '(+format-buffer :which-key "format")
     "lG" '(xref-find-apropos :which-key "workspace symbols")
     "lr" '(lsp-rename :which-key "rename")
@@ -152,8 +152,8 @@
    "g r" #'lsp-find-references
    "g y" #'lsp-find-type-definition
    "K" #'lsp-describe-thing-at-point
-   "]d" #'flymake-goto-next-error
-   "[d" #'flymake-goto-prev-error
+   "]d" #'flycheck-next-error
+   "[d" #'flycheck-previous-error
    "]g" #'diff-hl-next-hunk
    "[g" #'diff-hl-previous-hunk
    "]b" #'next-buffer

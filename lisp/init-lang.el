@@ -49,6 +49,11 @@
   :ensure t
   :hook (company-mode . company-box-mode))
 
+(use-package flycheck
+  :ensure t
+  :config
+  (add-hook 'after-init-hook #'global-flycheck-mode))
+
 (use-package lsp-mode
   :ensure t
   :hook (prog-mode . lsp-deferred)
@@ -56,14 +61,16 @@
   (lsp-enable-symbol-highlighting nil)
   (lsp-headerline-breadcrumb-enable nil)
   (lsp-semantic-tokens-enable nil)
-  (lsp-diagnostics-provider :flymake)
+  (lsp-diagnostics-provider :flycheck)
   (lsp-keep-workspace-alive nil)
   (lsp-warn-no-matched-clients nil)
   (lsp-enable-on-type-formatting nil)
+  (lsp-eldoc-enable-hover nil)
 
   ;; Performance
   (lsp-idle-delay 0.5)
-  (setq lsp-log-io nil))
+  (lsp-log-io nil)
+  (lsp-enable-file-watchers nil))
 
 ;; The unified debugger
 (use-package gud
