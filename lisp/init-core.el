@@ -67,8 +67,8 @@
 
 (setq make-backup-files nil
       create-lockfiles nil
-      auto-save-list-file-prefix (concat my/var-dir "auto-save-list/.saves-")
-      auto-save-file-name-transforms `((".*" ,(concat my/var-dir "auto-save/") t))
+      auto-save-default nil
+      auto-save-list-file-prefix nil
       recentf-save-file (concat my/var-dir "recentf")
       recentf-max-saved-items 200
       savehist-file (concat my/var-dir "savehist")
