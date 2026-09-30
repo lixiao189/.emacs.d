@@ -3,6 +3,9 @@
 (use-package evil
   :demand t
   :init
+  ;; Emacs 31 globalized modes no longer define `evil-mode-buffers', which
+  ;; evil 1.15 reads in `evil-initializing-p'.
+  (defvar evil-mode-buffers nil)
   (setq evil-want-integration t
         evil-want-keybinding nil          ; evil-collection handles it
         evil-want-C-u-scroll t
