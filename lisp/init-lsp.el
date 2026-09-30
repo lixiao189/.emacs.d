@@ -1,10 +1,10 @@
 ;;; init-lsp.el --- Shared tree-sitter, eglot and formatting setup -*- lexical-binding: t; -*-
-;; Per-language settings live in lang/init-cpp.el, lang/init-go.el and lang/init-python.el.
+;; Per-language settings live in lang/init-<lang>.el (cpp, go, python, rust).
 
 ;;;; Tree-sitter (built in) -------------------------------------------------------
 ;; Grammars: M-x my/treesit-install-grammars (needs a C compiler; macOS has cc).
 (setq treesit-language-source-alist
-      ;; C/C++, Go and Python grammars are added by their init-<lang>.el files.
+      ;; C/C++, Go, Python and Rust grammars are added by their init-<lang>.el files.
       '((bash   "https://github.com/tree-sitter/tree-sitter-bash" "v0.23.3")
         (json   "https://github.com/tree-sitter/tree-sitter-json" "v0.24.8")
         (yaml   "https://github.com/tree-sitter-grammars/tree-sitter-yaml" "v0.7.0")

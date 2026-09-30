@@ -28,6 +28,7 @@
 
 ;; exec-path-from-shell spawns a login shell (~100-300ms). Set PATH by hand.
 (let ((dirs (list "/opt/homebrew/bin" "/opt/homebrew/sbin" "/usr/local/bin"
+                  "/opt/homebrew/opt/rustup/bin" ; rust-analyzer, rustfmt (brew rustup)
                   (expand-file-name "~/.local/bin")
                   (expand-file-name "~/go/bin")
                   (expand-file-name "~/.cargo/bin")

@@ -125,6 +125,25 @@
       which-key-min-display-lines 4)
 (add-hook 'emacs-startup-hook #'which-key-mode)
 
+;; File tree sidebar (LazyVim neo-tree). Toggled with <leader>e / <leader>E.
+(use-package treemacs
+  :commands (treemacs treemacs-select-window)
+  :init
+  (setq treemacs-persist-file (concat my/var-dir "treemacs-persist")
+        treemacs-last-error-persist-file (concat my/var-dir "treemacs-persist-at-last-error")
+        treemacs-width 32
+        treemacs-is-never-other-window t
+        treemacs-no-png-images t        ; plain text markers, no icon dependency
+        treemacs-follow-after-init t)
+  :config
+  (treemacs-follow-mode 1)
+  (treemacs-filewatch-mode 1)
+  (treemacs-git-mode 'simple))
+
+(use-package treemacs-evil
+  :demand t
+  :after (treemacs evil))
+
 (defun my/open-config (&rest _)
   "Open the config folder in dired."
   (interactive)
@@ -154,8 +173,8 @@
         dashboard-set-heading-icons nil
         dashboard-set-file-icons nil
         dashboard-projects-backend 'project-el
-        dashboard-items '((recents . 8) (projects . 5))
-        dashboard-item-shortcuts '((recents . "r") (projects . "p"))
+        dashboard-items '((recents . 8) (bookmarks . 5) (projects . 5))
+        dashboard-item-shortcuts '((recents . "r") (bookmarks . "m") (projects . "p"))
         dashboard-set-footer nil
         dashboard-banner-logo-title "Emacs")
   ;; Also show it for `emacsclient -c` and new frames.
