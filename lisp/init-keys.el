@@ -131,6 +131,15 @@
   "[h" #'diff-hl-previous-hunk
   ;; esc clears search highlight
   "<escape>" #'my/clear-search-and-escape)
+;; treemacs' window is `no-other-window', which windmove skips by default.
+(setq windmove-allow-all-windows t)
+
+;; treemacs has its own evil state, so the normal/motion bindings above don't
+;; apply there. Without this C-l can't leave the sidebar (C-j/C-k stay project nav).
+(with-eval-after-load 'treemacs-evil
+  (general-def :keymaps 'evil-treemacs-state-map
+    "C-h" #'evil-window-left
+    "C-l" #'evil-window-right))
 
 (general-def :states '(normal visual insert emacs)
   "C-s" #'save-buffer                      ; <C-s> save
