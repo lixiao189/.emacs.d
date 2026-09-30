@@ -7,6 +7,20 @@
   (setq markdown-enable-math t                   ; fontify $..$ and $$..$$
         markdown-fontify-code-blocks-natively t))
 
+;; xwidget-webkit-mode is special-mode derived, so evil puts it in motion state where j/k
+;; just move an invisible point.  Map the usual vim scroll keys to webkit scrolling.
+(with-eval-after-load 'xwidget
+  (with-eval-after-load 'evil
+    (evil-define-key 'motion xwidget-webkit-mode-map
+      "j" #'xwidget-webkit-scroll-up-line
+      "k" #'xwidget-webkit-scroll-down-line
+      "h" #'xwidget-webkit-scroll-backward
+      "l" #'xwidget-webkit-scroll-forward
+      (kbd "C-d") #'xwidget-webkit-scroll-up
+      (kbd "C-u") #'xwidget-webkit-scroll-down
+      "gg" #'xwidget-webkit-scroll-top
+      "G" #'xwidget-webkit-scroll-bottom)))
+
 ;;;; Live preview inside Emacs (xwidget-webkit) ------------------------------------------
 ;; Rendering happens in the webkit widget (markdown-it + KaTeX from jsdelivr), so no
 ;; pandoc/multimarkdown is needed. Edits are pushed with JS, which keeps it flicker-free.
