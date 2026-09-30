@@ -9,6 +9,7 @@
 (require 'init-ui)
 (require 'init-evil)
 (require 'init-completion)
+(require 'init-git)
 (require 'init-lsp)
 (require 'init-cpp)
 (require 'init-go)

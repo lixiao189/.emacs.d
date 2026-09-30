@@ -125,20 +125,28 @@
       which-key-min-display-lines 4)
 (add-hook 'emacs-startup-hook #'which-key-mode)
 
-;; Git gutter (LazyVim gitsigns).
-(use-package diff-hl
-  :hook ((prog-mode . diff-hl-mode)
-         (conf-mode . diff-hl-mode)
-         (dired-mode . diff-hl-dired-mode)
-         (magit-pre-refresh . diff-hl-magit-pre-refresh)
-         (magit-post-refresh . diff-hl-magit-post-refresh))
-  :config
-  (setq diff-hl-draw-borders nil))
+(defun my/open-config (&rest _)
+  "Open the config folder in dired."
+  (interactive)
+  (dired user-emacs-directory))
 
 ;; Welcome screen (LazyVim/alpha-like). Nerd icons are optional; skipped if unavailable.
 (use-package dashboard
   :demand t
+  :bind (:map dashboard-mode-map ("c" . my/open-config))
   :init
+  (setq dashboard-startupify-list '(dashboard-insert-banner
+                                    dashboard-insert-newline
+                                    dashboard-insert-banner-title
+                                    dashboard-insert-newline
+                                    dashboard-insert-navigator
+                                    dashboard-insert-newline
+                                    dashboard-insert-init-info
+                                    dashboard-insert-items
+                                    dashboard-insert-newline
+                                    dashboard-insert-footer)
+        dashboard-navigator-buttons
+        '((("" "Config (c)" "Open the config folder" my/open-config))))
   (setq dashboard-startup-banner 'logo
         dashboard-center-content t
         dashboard-vertically-center-content t
