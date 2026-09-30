@@ -28,19 +28,14 @@
   (interactive) (consult-ripgrep default-directory (thing-at-point 'symbol t)))
 (defun my/find-config () (interactive) (consult-fd user-emacs-directory))
 (defun my/explorer (dir)
-  "Toggle the treemacs sidebar, showing DIR as its only project."
+  "Toggle the treemacs sidebar, showing DIR as its only project.
+Like Doom's `+treemacs/toggle': the workspace is replaced rather than
+extended, so a persisted parent (or stale) project can't shadow DIR."
   (require 'treemacs)
   (if (eq (treemacs-current-visibility) 'visible)
       (delete-window (treemacs-get-local-window))
-    (let ((dir (directory-file-name (expand-file-name dir)))
-          (treemacs-follow-after-init t))
-      (unless (treemacs-is-path dir :in-workspace)
-        (treemacs-block
-         (treemacs-do-add-project-to-workspace
-          dir (file-name-nondirectory dir))))
-      (treemacs-select-window)
-      (when-let* ((project (treemacs-is-path dir :in-workspace)))
-        (treemacs-goto-file-node (treemacs-project->path project))))))
+    (let ((dir (treemacs-canonical-path dir)))
+      (treemacs--show-single-project dir (file-name-nondirectory dir)))))
 (defun my/explorer-root () (interactive) (my/explorer (my/root)))
 (defun my/explorer-cwd  () (interactive) (my/explorer default-directory))
 (defun my/terminal-root ()
