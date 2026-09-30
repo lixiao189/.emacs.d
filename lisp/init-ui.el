@@ -135,5 +135,28 @@
   :config
   (setq diff-hl-draw-borders nil))
 
+;; Welcome screen (LazyVim/alpha-like). Nerd icons are optional; skipped if unavailable.
+(use-package dashboard
+  :demand t
+  :init
+  (setq dashboard-startup-banner 'logo
+        dashboard-center-content t
+        dashboard-vertically-center-content t
+        dashboard-display-icons-p nil
+        dashboard-set-heading-icons nil
+        dashboard-set-file-icons nil
+        dashboard-projects-backend 'project-el
+        dashboard-items '((recents . 8) (projects . 5))
+        dashboard-item-shortcuts '((recents . "r") (projects . "p"))
+        dashboard-set-footer nil
+        dashboard-banner-logo-title "Emacs")
+  ;; Also show it for `emacsclient -c` and new frames.
+  (setq initial-buffer-choice
+        (lambda () (get-buffer-create "*dashboard*")))
+  :config
+  (dashboard-setup-startup-hook)
+  (with-eval-after-load 'evil
+    (evil-set-initial-state 'dashboard-mode 'motion)))
+
 (provide 'init-ui)
 ;;; init-ui.el ends here
