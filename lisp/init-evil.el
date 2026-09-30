@@ -70,6 +70,35 @@
             (beginning-of-line) (open-line 1) (insert comment-start " ")
             (indent-according-to-mode) (evil-insert-state))))
 
+;; mini.ai (LazyVim): af/if function, ac/ic class, aa/ia argument,
+;; ao/io block/conditional/loop, plus ]f / [f motions, via tree-sitter.
+(use-package evil-textobj-tree-sitter
+  :after evil
+  :demand t
+  :config
+  (define-key evil-outer-text-objects-map "f"
+              (evil-textobj-tree-sitter-get-textobj "function.outer"))
+  (define-key evil-inner-text-objects-map "f"
+              (evil-textobj-tree-sitter-get-textobj "function.inner"))
+  (define-key evil-outer-text-objects-map "c"
+              (evil-textobj-tree-sitter-get-textobj "class.outer"))
+  (define-key evil-inner-text-objects-map "c"
+              (evil-textobj-tree-sitter-get-textobj "class.inner"))
+  (define-key evil-outer-text-objects-map "a"
+              (evil-textobj-tree-sitter-get-textobj "parameter.outer"))
+  (define-key evil-inner-text-objects-map "a"
+              (evil-textobj-tree-sitter-get-textobj "parameter.inner"))
+  (define-key evil-outer-text-objects-map "o"
+              (evil-textobj-tree-sitter-get-textobj
+                  ("conditional.outer" "loop.outer" "block.outer")))
+  (define-key evil-inner-text-objects-map "o"
+              (evil-textobj-tree-sitter-get-textobj
+                  ("conditional.inner" "loop.inner" "block.inner")))
+  ;; Jump between functions.
+  (evil-define-key 'normal 'global
+    "]f" (lambda () (interactive) (evil-textobj-tree-sitter-goto-textobj "function.outer"))
+    "[f" (lambda () (interactive) (evil-textobj-tree-sitter-goto-textobj "function.outer" t))))
+
 ;; `s` = flash.nvim-style jump.
 (use-package avy
   :commands (avy-goto-char-timer)
