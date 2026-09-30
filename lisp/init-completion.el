@@ -48,7 +48,9 @@
   :init (setq prefix-help-command #'embark-prefix-help-command))
 (use-package embark-consult :after (embark consult))
 
-;; In-buffer completion popup (LazyVim/blink.cmp style keys).
+;; In-buffer completion popup (VS Code suggest-widget style keys): the first
+;; candidate is preselected, Tab/Enter accept it, Esc dismisses, C-SPC triggers
+;; the popup and toggles the docs panel while it is open.
 (use-package corfu
   :hook (after-init . global-corfu-mode)
   :init
@@ -56,13 +58,15 @@
         corfu-auto-delay 0.1
         corfu-auto-prefix 2
         corfu-cycle t
-        corfu-preselect 'prompt
+        corfu-preselect 'first
         corfu-quit-no-match 'separator
         corfu-popupinfo-delay '(0.5 . 0.2))
   :config
-  (keymap-set corfu-map "RET" nil)            ; Enter = newline, never accept
-  (keymap-set corfu-map "C-y" #'corfu-insert) ; accept
-  (keymap-set corfu-map "C-e" #'corfu-quit)   ; dismiss
+  ;; `corfu-insert' rather than the default `corfu-complete' on Tab so the
+  ;; candidate's exit function runs (LSP snippet expansion, auto-imports).
+  (keymap-set corfu-map "TAB" #'corfu-insert)
+  (keymap-set corfu-map "<tab>" #'corfu-insert)
+  (keymap-set corfu-map "RET" #'corfu-insert)
   (keymap-set corfu-map "C-n" #'corfu-next)
   (keymap-set corfu-map "C-p" #'corfu-previous)
   (keymap-set corfu-map "C-j" #'corfu-next)
@@ -70,13 +74,17 @@
   (require 'corfu-popupinfo)
   (corfu-popupinfo-mode 1)
   (with-eval-after-load 'evil
-    (evil-define-key 'insert 'global (kbd "C-SPC") #'completion-at-point)))
+    (evil-define-key 'insert 'global (kbd "C-SPC") #'completion-at-point)
+    ;; Insert-state bindings shadow plain `corfu-map', so go through evil here.
+    (evil-define-key 'insert corfu-map (kbd "C-SPC") #'corfu-popupinfo-toggle)))
 
-;; Eglot expands LSP snippet completions (function args, placeholders) through
-;; yasnippet; it only advertises snippetSupport to the server when yasnippet is
-;; available, so enable it wherever eglot manages a buffer.
+;; Eglot needs yasnippet for LSP snippet completions.  Tab/S-Tab jump between
+;; placeholders, but the completion popup gets Tab first while it is open.
 (use-package yasnippet
-  :hook (eglot-managed-mode . yas-minor-mode))
+  :hook (eglot-managed-mode . yas-minor-mode)
+  :config
+  (add-hook 'yas-keymap-disable-hook
+            (lambda () (bound-and-true-p completion-in-region-mode))))
 
 (use-package cape
   :demand t
