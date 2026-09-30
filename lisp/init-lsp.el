@@ -55,16 +55,16 @@
   :after eglot
   :config (eglot-booster-mode 1))
 
-;;;; Formatting (LazyVim: format on save via conform.nvim) ---------------------------
-;; Languages enable it via their mode hooks and register formatters in their own files.
+;;;; Formatting ----------------------------------------------------------------------
+;; Format on save is off by default; format manually with `SPC c f', or toggle
+;; apheleia-mode per buffer with `SPC u f'. Languages register formatters in their own files.
 (use-package apheleia
   :commands apheleia-mode)
 
 (defun my/lang-setup (modes &optional eglot)
-  "Enable format-on-save (and eglot when EGLOT) in each of MODES."
+  "Enable eglot when EGLOT in each of MODES (format on save stays off)."
   (dolist (m modes)
     (let ((hook (intern (format "%s-hook" m))))
-      (add-hook hook #'apheleia-mode)
       (when eglot (add-hook hook #'eglot-ensure)))))
 
 (defun my/format ()
