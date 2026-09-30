@@ -35,6 +35,78 @@
 (column-number-mode 1)
 (setq-default truncate-lines t)
 
+;; Mode line: vim/lualine-like. [STATE] branch file ... diag lsp mode enc pos.
+(setq evil-mode-line-format nil)        ; we render the state ourselves
+
+(defface my/ml-normal '((t :inherit mode-line-emphasis :inverse-video t)) "Normal state.")
+(defface my/ml-insert '((t :inherit success :inverse-video t)) "Insert state.")
+(defface my/ml-visual '((t :inherit warning :inverse-video t)) "Visual state.")
+(defface my/ml-replace '((t :inherit error :inverse-video t)) "Replace state.")
+(defface my/ml-emacs '((t :inherit font-lock-keyword-face :inverse-video t)) "Emacs state.")
+
+(defun my/ml-state ()
+  (let* ((st (and (boundp 'evil-state) evil-state))
+         (spec (pcase st
+                 ('normal   '(" NORMAL " my/ml-normal))
+                 ('insert   '(" INSERT " my/ml-insert))
+                 ('visual   '(" VISUAL " my/ml-visual))
+                 ('replace  '(" REPLACE " my/ml-replace))
+                 ('operator '(" O-PENDING " my/ml-normal))
+                 ('motion   '(" MOTION " my/ml-normal))
+                 (_         '(" EMACS " my/ml-emacs)))))
+    (propertize (car spec) 'face (cadr spec))))
+
+(defun my/ml-vc ()
+  (when (and vc-mode buffer-file-name)
+    (let* ((br (replace-regexp-in-string "\\`[ ]*[A-Za-z]+[-:@!?]" "" (substring-no-properties vc-mode)))
+           (st (vc-state buffer-file-name))
+           (face (pcase st
+                   ('edited 'warning) ('added 'success) ('conflict 'error)
+                   ('unregistered 'shadow) (_ 'success))))
+      (concat " " (propertize (concat "\ue0a0 " br) 'face face)
+              (when (memq st '(edited added conflict))
+                (propertize " +" 'face face))))))
+
+(defun my/ml-diag ()
+  (when (bound-and-true-p flymake-mode)
+    (let* ((e 0) (w 0) (n 0))
+      (dolist (d (flymake-diagnostics))
+        (pcase (flymake--severity (flymake-diagnostic-type d))
+          ((pred (<= 2)) (cl-incf e))
+          (1 (cl-incf w))
+          (_ (cl-incf n))))
+      (concat (propertize (format " E:%d" e) 'face (if (> e 0) 'error 'shadow))
+              (propertize (format " W:%d" w) 'face (if (> w 0) 'warning 'shadow))))))
+
+(defun my/ml-lsp ()
+  (when (bound-and-true-p eglot--managed-mode)
+    (let ((srv (and (fboundp 'eglot-current-server) (eglot-current-server))))
+      (if srv
+          (propertize (format " LSP:%s" (or (ignore-errors (eglot-project-nickname srv)) "on"))
+                      'face 'success
+                      'help-echo (format "eglot: %s" (ignore-errors (eglot--server-info srv))))
+        (propertize " LSP…" 'face 'warning)))))
+
+(setq-default
+ mode-line-format
+ '("%e"
+   (:eval (my/ml-state))
+   (:eval (my/ml-vc))
+   " "
+   (:propertize "%b" face mode-line-buffer-id)
+   (:eval (cond (buffer-read-only (propertize " RO" 'face 'warning))
+                ((buffer-modified-p) (propertize " [+]" 'face 'error))))
+   mode-line-format-right-align
+   (:eval (my/ml-diag))
+   (:eval (my/ml-lsp))
+   (:eval (when (bound-and-true-p defining-kbd-macro) (propertize " REC" 'face 'error)))
+   " " (:propertize mode-name face bold)
+   " " (:eval (let ((c (coding-system-eol-type buffer-file-coding-system)))
+                (concat (upcase (replace-regexp-in-string
+                                 "-.*" "" (symbol-name (coding-system-base buffer-file-coding-system))))
+                        (pcase c (0 "/LF") (1 "/CRLF") (2 "/CR") (_ "")))))
+   "  %l:%c  %p "))
+
 ;; Tabs (LazyVim <leader><tab>): only show the bar when there is >1 tab.
 (setq tab-bar-show 1
       tab-bar-close-button-show nil
