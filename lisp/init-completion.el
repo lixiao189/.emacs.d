@@ -72,6 +72,12 @@
   (with-eval-after-load 'evil
     (evil-define-key 'insert 'global (kbd "C-SPC") #'completion-at-point)))
 
+;; Eglot expands LSP snippet completions (function args, placeholders) through
+;; yasnippet; it only advertises snippetSupport to the server when yasnippet is
+;; available, so enable it wherever eglot manages a buffer.
+(use-package yasnippet
+  :hook (eglot-managed-mode . yas-minor-mode))
+
 (use-package cape
   :demand t
   :hook ((prog-mode text-mode conf-mode) . my/cape-setup)
