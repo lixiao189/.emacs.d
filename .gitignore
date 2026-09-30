@@ -1,0 +1,12 @@
+# Installed / generated artifacts
+/elpa/
+/tree-sitter/
+/var/
+/eln-cache/
+package-quickstart.el
+package-quickstart.elc
+*.elc
+*~
+\#*\#
+.\#*
+.DS_Store
