@@ -278,5 +278,10 @@
   "xq" '(consult-compile-error :which-key "Quickfix List")
   "xl" '(flymake-show-buffer-diagnostics :which-key "Location List"))
 
+;; Markdown only: live preview in a side window (LazyVim <leader>cp).
+(my/leader
+  :keymaps 'markdown-mode-map
+  "cp" '(my/markdown-preview :which-key "Markdown Preview"))
+
 (provide 'init-keys)
 ;;; init-keys.el ends here

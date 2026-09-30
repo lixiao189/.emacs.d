@@ -15,6 +15,7 @@ Fast-starting Emacs with Vim emulation, LSP (eglot) for C++/Go/Python/Rust, and 
 | `lisp/lang/init-go.el` | Go: grammar, tabs, gopls settings, goimports |
 | `lisp/lang/init-python.el` | Python: grammar, basedpyright, ruff formatting |
 | `lisp/lang/init-rust.el` | Rust: grammar, rust-analyzer (clippy checks), rustfmt |
+| `lisp/lang/init-markdown.el` | Markdown: markdown-mode, live preview with KaTeX math in an xwidget side window that scrolls with the editor (`SPC c p`) |
 | `lisp/init-keys.el` | LazyVim keymaps (`SPC` leader) |
 
 ## First run

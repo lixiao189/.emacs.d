@@ -8,7 +8,7 @@ Personal Emacs 31 config for macOS: Vim emulation (evil), LSP via eglot (C++/Go/
 
 ## Load order and architecture
 
-- `early-init.el` → `init.el` → `lisp/init-*.el` (language modules live in `lisp/lang/`), required in this order: core, ui, evil, completion, git, lsp, cpp, go, python, rust, keys. `init-keys.el` must stay last: it uses `general` `:after evil` and binds commands from consult/eglot/etc. defined by earlier modules.
+- `early-init.el` → `init.el` → `lisp/init-*.el` (language modules live in `lisp/lang/`), required in this order: core, ui, evil, completion, git, lsp, cpp, go, python, rust, markdown, keys. `init-keys.el` must stay last: it uses `general` `:after evil` and binds commands from consult/eglot/etc. defined by earlier modules.
 - Every package uses `use-package` with `use-package-always-ensure t` and `use-package-always-defer t`, so packages are lazy by default. Add `:demand t` (or a hook/command/keymap trigger) if something must load at startup.
 - Startup speed is a design goal. Do not add `exec-path-from-shell`. PATH is set by hand in `init-core.el`. GC and file-handler tuning lives in `early-init.el` and is restored on `emacs-startup-hook`.
 - Custom helper functions and leader definitions use the `my/` prefix (`my/leader`, `my/root`, ...).

@@ -15,6 +15,7 @@
 (require 'init-go)
 (require 'init-python)
 (require 'init-rust)
+(require 'init-markdown)
 (require 'init-keys)
 
 (when (file-exists-p custom-file) (load custom-file nil 'nomessage))
