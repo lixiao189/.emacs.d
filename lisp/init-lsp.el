@@ -1,14 +1,11 @@
-;;; init-lsp.el --- Eglot, tree-sitter, C++ / Go / Python -*- lexical-binding: t; -*-
+;;; init-lsp.el --- Shared tree-sitter, eglot and formatting setup -*- lexical-binding: t; -*-
+;; Per-language settings live in lang/init-cpp.el, lang/init-go.el and lang/init-python.el.
 
 ;;;; Tree-sitter (built in) -------------------------------------------------------
 ;; Grammars: M-x my/treesit-install-grammars (needs a C compiler; macOS has cc).
 (setq treesit-language-source-alist
-      '((c      "https://github.com/tree-sitter/tree-sitter-c" "v0.23.4")
-        (cpp    "https://github.com/tree-sitter/tree-sitter-cpp" "v0.23.4")
-        (go     "https://github.com/tree-sitter/tree-sitter-go" "v0.23.4")
-        (gomod  "https://github.com/camdencheek/tree-sitter-go-mod" "v1.1.0")
-        (python "https://github.com/tree-sitter/tree-sitter-python" "v0.23.6")
-        (bash   "https://github.com/tree-sitter/tree-sitter-bash" "v0.23.3")
+      ;; C/C++, Go and Python grammars are added by their init-<lang>.el files.
+      '((bash   "https://github.com/tree-sitter/tree-sitter-bash" "v0.23.3")
         (json   "https://github.com/tree-sitter/tree-sitter-json" "v0.24.8")
         (yaml   "https://github.com/tree-sitter-grammars/tree-sitter-yaml" "v0.7.0")
         (toml   "https://github.com/tree-sitter-grammars/tree-sitter-toml" "v0.7.0")
@@ -26,25 +23,9 @@
     (unless (treesit-language-available-p (car entry))
       (treesit-install-language-grammar (car entry)))))
 
-(add-to-list 'auto-mode-alist '("/go\\.mod\\'" . go-mod-ts-mode))
-(add-to-list 'auto-mode-alist '("/go\\.work\\'" . go-work-ts-mode))
-
-;;;; Language settings -------------------------------------------------------------
-(setq c-ts-mode-indent-offset 4
-      c-ts-mode-indent-style 'k&r
-      go-ts-mode-indent-offset 4
-      python-indent-offset 4
-      python-indent-guess-indent-offset nil)
-
-(add-hook 'go-ts-mode-hook (lambda () (setq tab-width 4 indent-tabs-mode t)))
-(add-hook 'go-mode-hook    (lambda () (setq tab-width 4 indent-tabs-mode t)))
-
 ;;;; Eglot (built in) ---------------------------------------------------------------
 (use-package eglot
   :ensure nil
-  :hook ((c-mode c-ts-mode c++-mode c++-ts-mode
-          go-mode go-ts-mode go-mod-ts-mode
-          python-mode python-ts-mode) . eglot-ensure)
   :init
   (setq eglot-autoshutdown t
         eglot-sync-connect nil          ; never block the UI on server startup
@@ -57,35 +38,6 @@
         eldoc-echo-area-use-multiline-p 3
         flymake-no-changes-timeout 0.5)
   :config
-  ;; --- servers ---
-  (add-to-list 'eglot-server-programs
-               `((c-mode c-ts-mode c++-mode c++-ts-mode)
-                 . ,(eglot-alternatives
-                     '(("clangd" "--background-index" "--clang-tidy"
-                        "--header-insertion=iwyu" "--completion-style=detailed"
-                        "--function-arg-placeholders=false" "-j=4"
-                        "--fallback-style=llvm")
-                       "ccls"))))
-  (add-to-list 'eglot-server-programs
-               `((python-mode python-ts-mode)
-                 . ,(eglot-alternatives
-                     '(("basedpyright-langserver" "--stdio")
-                       ("pyright-langserver" "--stdio")
-                       "pylsp"
-                       ("ruff" "server")))))
-  ;; go: gopls is the built-in default.
-
-  (setq-default eglot-workspace-configuration
-                '(:gopls (:staticcheck t
-                          :usePlaceholders :json-false
-                          :completeUnimported t
-                          :analyses (:unusedparams t :shadow t)
-                          :hints (:assignVariableTypes t :compositeLiteralFields t
-                                  :compositeLiteralTypes t :constantValues t
-                                  :functionTypeParameters t :parameterNames t
-                                  :rangeVariableTypes t))
-                  :basedpyright.analysis (:typeCheckingMode "standard")))
-
   ;; Inlay hints exist but start off (LazyVim default); toggle with <leader>uh.
   (add-hook 'eglot-managed-mode-hook (lambda () (eglot-inlay-hints-mode -1)))
   ;; Corfu + orderless: refetch candidates each keystroke, fall back to file/dabbrev.
@@ -104,16 +56,16 @@
   :config (eglot-booster-mode 1))
 
 ;;;; Formatting (LazyVim: format on save via conform.nvim) ---------------------------
+;; Languages enable it via their mode hooks and register formatters in their own files.
 (use-package apheleia
-  :hook ((c-mode c-ts-mode c++-mode c++-ts-mode
-          go-mode go-ts-mode python-mode python-ts-mode) . apheleia-mode)
-  :config
-  (setf (alist-get 'goimports apheleia-formatters) '("goimports"))
-  (dolist (m '(go-mode go-ts-mode))
-    (setf (alist-get m apheleia-mode-alist)
-          (if (executable-find "goimports") 'goimports 'gofmt)))
-  (dolist (m '(python-mode python-ts-mode))
-    (setf (alist-get m apheleia-mode-alist) '(ruff-isort ruff))))
+  :commands apheleia-mode)
+
+(defun my/lang-setup (modes &optional eglot)
+  "Enable format-on-save (and eglot when EGLOT) in each of MODES."
+  (dolist (m modes)
+    (let ((hook (intern (format "%s-hook" m))))
+      (add-hook hook #'apheleia-mode)
+      (when eglot (add-hook hook #'eglot-ensure)))))
 
 (defun my/format ()
   "Format buffer: apheleia when a formatter applies, else the LSP server."

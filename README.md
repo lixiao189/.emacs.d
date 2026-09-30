@@ -9,7 +9,10 @@ Fast-starting Emacs with Vim emulation, LSP (eglot) for C++/Go/Python, and LazyV
 | `lisp/init-ui.el` | doom-tokyo-night theme, font, relative line numbers, which-key, diff-hl |
 | `lisp/init-evil.el` | evil, evil-collection, surround (`gsa/gsd/gsr`), comment (`gc`), avy (`s`) |
 | `lisp/init-completion.el` | vertico, orderless, marginalia, consult, embark, corfu, cape |
-| `lisp/init-lsp.el` | tree-sitter, eglot (clangd / gopls / basedpyright), apheleia formatting |
+| `lisp/init-lsp.el` | shared tree-sitter, eglot and apheleia setup |
+| `lisp/lang/init-cpp.el` | C/C++: grammar, 2-space indent, clangd |
+| `lisp/lang/init-go.el` | Go: grammar, tabs, gopls settings, goimports |
+| `lisp/lang/init-python.el` | Python: grammar, basedpyright, ruff formatting |
 | `lisp/init-keys.el` | LazyVim keymaps (`SPC` leader) |
 
 ## First run
