@@ -7,7 +7,9 @@
         doom-themes-enable-italic t)
   (load-theme 'doom-tokyo-night t))
 
-;; Fonts: first installed candidate wins (macOS, then Windows, then Linux).
+;;;; Fonts
+
+;; The first installed font in each list wins.
 (defvar my/mono-fonts '("JetBrainsMono Nerd Font Mono" "JetBrains Mono" "Fira Code"
                         "SF Mono" "Menlo" "Consolas" "DejaVu Sans Mono"))
 (defvar my/cjk-fonts '("PingFang SC" "Hiragino Sans GB" "Heiti SC"
@@ -15,6 +17,7 @@
                        "Noto Sans CJK SC" "Source Han Sans SC" "WenQuanYi Micro Hei"))
 
 (defun my/first-font (families frame)
+  "Return the first of FAMILIES available on FRAME."
   (seq-find (lambda (f) (find-font (font-spec :family f) frame)) families))
 
 (defun my/font-extents (family frame)
@@ -24,10 +27,11 @@
     (cons (aref info 4) (aref info 5))))
 
 (defun my/setup-font (&optional frame)
+  "Set the default and CJK fonts on FRAME."
   (when (display-graphic-p frame)
     (when-let* ((font (my/first-font my/mono-fonts frame)))
       (set-face-attribute 'default frame :family font :height 140))
-    ;; Shrink the CJK font to fit the mono font's height, so lines stay even.
+    ;; Scale the CJK font down to the mono font's height so lines stay even.
     (when-let* ((cjk (my/first-font my/cjk-fonts frame)))
       (let ((mono (my/font-extents (face-attribute 'default :family frame) frame))
             (wide (my/font-extents cjk frame)))
@@ -42,7 +46,9 @@
 (my/setup-font)
 (add-hook 'after-make-frame-functions #'my/setup-font)
 
-;; Scrolling: smooth trackpad, LazyVim-like scrolloff.
+;;;; Editing view
+
+;; Smooth trackpad scrolling, LazyVim-like scrolloff.
 (setq scroll-margin 4
       scroll-conservatively 101
       scroll-preserve-screen-position t
@@ -51,7 +57,7 @@
       pixel-scroll-precision-interpolate-page t)
 (pixel-scroll-precision-mode 1)
 
-;; Line numbers (relative, like LazyVim) + current line highlight in code buffers.
+;; Relative line numbers and current-line highlight in code buffers.
 (setq display-line-numbers-type 'relative
       display-line-numbers-width-start t)
 (dolist (h '(prog-mode-hook conf-mode-hook))
@@ -60,8 +66,10 @@
 (column-number-mode 1)
 (setq-default truncate-lines t)
 
-;; Mode line: vim/lualine-like. [STATE] branch file ... diag lsp mode enc pos.
-(setq evil-mode-line-format nil)        ; we render the state ourselves
+;;;; Mode line
+
+;; lualine-like: STATE branch file ... diagnostics lsp mode encoding position.
+(setq evil-mode-line-format nil)        ; the state is drawn by `my/ml-state'
 
 (defface my/ml-normal '((t :inherit mode-line-emphasis :inverse-video t)) "Normal state.")
 (defface my/ml-insert '((t :inherit success :inverse-video t)) "Insert state.")
@@ -70,8 +78,7 @@
 (defface my/ml-emacs '((t :inherit font-lock-keyword-face :inverse-video t)) "Emacs state.")
 
 (defun my/ml-state ()
-  (let* ((st (and (boundp 'evil-state) evil-state))
-         (spec (pcase st
+  (let* ((spec (pcase (bound-and-true-p evil-state)
                  ('normal   '(" NORMAL " my/ml-normal))
                  ('insert   '(" INSERT " my/ml-insert))
                  ('visual   '(" VISUAL " my/ml-visual))
@@ -82,35 +89,52 @@
     (propertize (car spec) 'face (cadr spec))))
 
 (defun my/ml-vc ()
+  "Branch name, colored by the file's VC state."
   (when (and vc-mode buffer-file-name)
-    (let* ((br (replace-regexp-in-string "\\`[ ]*[A-Za-z]+[-:@!?]" "" (substring-no-properties vc-mode)))
-           (st (vc-state buffer-file-name))
-           (face (pcase st
-                   ('edited 'warning) ('added 'success) ('conflict 'error)
-                   ('unregistered 'shadow) (_ 'success))))
-      (concat " " (propertize (concat "\ue0a0 " br) 'face face)
-              (when (memq st '(edited added conflict))
+    (let* ((branch (replace-regexp-in-string
+                    "\\`[ ]*[A-Za-z]+[-:@!?]" "" (substring-no-properties vc-mode)))
+           (state (vc-state buffer-file-name))
+           (face (pcase state
+                   ('edited 'warning)
+                   ('conflict 'error)
+                   ('unregistered 'shadow)
+                   (_ 'success))))
+      (concat " " (propertize (concat "\ue0a0 " branch) 'face face)
+              (when (memq state '(edited added conflict))
                 (propertize " +" 'face face))))))
 
 (defun my/ml-diag ()
+  "Flymake error and warning counts."
   (when (bound-and-true-p flymake-mode)
-    (let* ((e 0) (w 0) (n 0))
-      (dolist (d (flymake-diagnostics))
-        (pcase (flymake--severity (flymake-diagnostic-type d))
-          ((pred (<= 2)) (cl-incf e))
-          (1 (cl-incf w))
-          (_ (cl-incf n))))
-      (concat (propertize (format " E:%d" e) 'face (if (> e 0) 'error 'shadow))
-              (propertize (format " W:%d" w) 'face (if (> w 0) 'warning 'shadow))))))
+    (let ((errors 0) (warnings 0))
+      (dolist (diag (flymake-diagnostics))
+        (pcase (flymake--severity (flymake-diagnostic-type diag))
+          ((pred (<= 2)) (cl-incf errors))
+          (1 (cl-incf warnings))))
+      (concat (propertize (format " E:%d" errors) 'face (if (> errors 0) 'error 'shadow))
+              (propertize (format " W:%d" warnings) 'face (if (> warnings 0) 'warning 'shadow))))))
 
 (defun my/ml-lsp ()
+  "LSP status: project name when connected, \"LSP…\" while connecting."
   (when (bound-and-true-p eglot--managed-mode)
-    (let ((srv (and (fboundp 'eglot-current-server) (eglot-current-server))))
-      (if srv
-          (propertize (format " LSP:%s" (or (ignore-errors (eglot-project-nickname srv)) "on"))
-                      'face 'success
-                      'help-echo (format "eglot: %s" (ignore-errors (eglot--server-info srv))))
-        (propertize " LSP…" 'face 'warning)))))
+    (if-let* ((server (and (fboundp 'eglot-current-server) (eglot-current-server))))
+        (propertize (format " LSP:%s" (or (ignore-errors (eglot-project-nickname server)) "on"))
+                    'face 'success
+                    'help-echo (format "eglot: %s" (ignore-errors (eglot--server-info server))))
+      (propertize " LSP…" 'face 'warning))))
+
+(defun my/ml-buffer-status ()
+  (cond (buffer-read-only (propertize " RO" 'face 'warning))
+        ((buffer-modified-p) (propertize " [+]" 'face 'error))))
+
+(defun my/ml-macro ()
+  (when defining-kbd-macro (propertize " REC" 'face 'error)))
+
+(defun my/ml-encoding ()
+  "Coding system and line endings, e.g. UTF-8/LF."
+  (concat (upcase (symbol-name (coding-system-base buffer-file-coding-system)))
+          (pcase (coding-system-eol-type buffer-file-coding-system)
+            (0 "/LF") (1 "/CRLF") (2 "/CR") (_ ""))))
 
 (setq-default
  mode-line-format
@@ -119,20 +143,18 @@
    (:eval (my/ml-vc))
    " "
    (:propertize "%b" face mode-line-buffer-id)
-   (:eval (cond (buffer-read-only (propertize " RO" 'face 'warning))
-                ((buffer-modified-p) (propertize " [+]" 'face 'error))))
+   (:eval (my/ml-buffer-status))
    mode-line-format-right-align
    (:eval (my/ml-diag))
    (:eval (my/ml-lsp))
-   (:eval (when (bound-and-true-p defining-kbd-macro) (propertize " REC" 'face 'error)))
+   (:eval (my/ml-macro))
    " " (:propertize mode-name face bold)
-   " " (:eval (let ((c (coding-system-eol-type buffer-file-coding-system)))
-                (concat (upcase (replace-regexp-in-string
-                                 "-.*" "" (symbol-name (coding-system-base buffer-file-coding-system))))
-                        (pcase c (0 "/LF") (1 "/CRLF") (2 "/CR") (_ "")))))
+   " " (:eval (my/ml-encoding))
    "  %l:%c  %p "))
 
-;; Tabs (LazyVim <leader><tab>): only show the bar when there is >1 tab.
+;;;; Tabs, windows, which-key
+
+;; Show the tab bar only with more than one tab.
 (setq tab-bar-show 1
       tab-bar-close-button-show nil
       tab-bar-new-button-show nil
@@ -142,7 +164,6 @@
       window-divider-default-places 'right-only)
 (add-hook 'emacs-startup-hook #'window-divider-mode)
 
-;; which-key is built in.
 (setq which-key-idle-delay 0.3
       which-key-idle-secondary-delay 0.05
       which-key-sort-order #'which-key-key-order-alpha
@@ -150,7 +171,8 @@
       which-key-min-display-lines 4)
 (add-hook 'emacs-startup-hook #'which-key-mode)
 
-;; File tree sidebar (LazyVim neo-tree). Toggled with <leader>e / <leader>E.
+;;;; File tree (SPC e / SPC E)
+
 (use-package treemacs
   :commands (treemacs treemacs-select-window)
   :init
@@ -158,7 +180,7 @@
         treemacs-last-error-persist-file (concat my/var-dir "treemacs-persist-at-last-error")
         treemacs-width 32
         treemacs-is-never-other-window t
-        treemacs-no-png-images t        ; plain text markers, no icon dependency
+        treemacs-no-png-images t        ; text markers, no icons needed
         treemacs-follow-after-init t)
   :config
   (treemacs-follow-mode 1)
@@ -174,7 +196,8 @@
   (interactive)
   (dired user-emacs-directory))
 
-;; Welcome screen (LazyVim/alpha-like). Nerd icons are optional; skipped if unavailable.
+;;;; Dashboard
+
 (use-package dashboard
   :demand t
   :bind (:map dashboard-mode-map ("c" . my/open-config))
@@ -190,8 +213,8 @@
                                     dashboard-insert-newline
                                     dashboard-insert-footer)
         dashboard-navigator-buttons
-        '((("" "Config (c)" "Open the config folder" my/open-config))))
-  (setq dashboard-startup-banner 'logo
+        '((("" "Config (c)" "Open the config folder" my/open-config)))
+        dashboard-startup-banner 'logo
         dashboard-center-content t
         dashboard-vertically-center-content t
         dashboard-display-icons-p nil
@@ -202,9 +225,8 @@
         dashboard-item-shortcuts '((recents . "r") (bookmarks . "m") (projects . "p"))
         dashboard-set-footer nil
         dashboard-banner-logo-title "Emacs")
-  ;; Also show it for `emacsclient -c` and new frames. Skip when files are
-  ;; passed on the command line: Emacs would otherwise split the frame and
-  ;; show an empty *dashboard* above the file.
+  ;; Show it for `emacsclient -c' too, but not when files are given on the
+  ;; command line (that would split the frame with an empty dashboard).
   (when (or (daemonp) (< (length command-line-args) 2))
     (setq initial-buffer-choice
           (lambda ()

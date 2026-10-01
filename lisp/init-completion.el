@@ -7,7 +7,7 @@
   :config
   (require 'vertico-repeat)
   (add-hook 'minibuffer-setup-hook #'vertico-repeat-save)
-  ;; Telescope-style movement.
+  ;; Telescope-style keys.
   (keymap-set vertico-map "C-j" #'vertico-next)
   (keymap-set vertico-map "C-k" #'vertico-previous)
   (keymap-set vertico-map "C-d" #'vertico-scroll-up)
@@ -36,7 +36,7 @@
         register-preview-delay 0.5
         register-preview-function #'consult-register-format)
   :config
-  (setq consult-preview-key "M-."           ; no live preview = snappier
+  (setq consult-preview-key "M-."           ; preview on demand only
         consult-narrow-key "<"
         consult-async-min-input 2
         consult-async-refresh-delay 0.1
@@ -48,9 +48,8 @@
   :init (setq prefix-help-command #'embark-prefix-help-command))
 (use-package embark-consult :after (embark consult))
 
-;; In-buffer completion popup (VS Code suggest-widget style keys): the first
-;; candidate is preselected, Tab/Enter accept it, Esc dismisses, C-SPC triggers
-;; the popup and toggles the docs panel while it is open.
+;; In-buffer completion, VS Code style: first candidate preselected,
+;; Tab/RET accept, Esc dismisses, C-SPC opens the popup or toggles docs.
 (use-package corfu
   :hook (after-init . global-corfu-mode)
   :init
@@ -62,8 +61,8 @@
         corfu-quit-no-match 'separator
         corfu-popupinfo-delay '(0.5 . 0.2))
   :config
-  ;; `corfu-insert' rather than the default `corfu-complete' on Tab so the
-  ;; candidate's exit function runs (LSP snippet expansion, auto-imports).
+  ;; `corfu-insert' (not `corfu-complete') runs the candidate's exit
+  ;; function: snippet expansion and auto-imports.
   (keymap-set corfu-map "TAB" #'corfu-insert)
   (keymap-set corfu-map "<tab>" #'corfu-insert)
   (keymap-set corfu-map "RET" #'corfu-insert)
@@ -75,11 +74,10 @@
   (corfu-popupinfo-mode 1)
   (with-eval-after-load 'evil
     (evil-define-key 'insert 'global (kbd "C-SPC") #'completion-at-point)
-    ;; Insert-state bindings shadow plain `corfu-map', so go through evil here.
+    ;; Insert-state bindings shadow `corfu-map', so bind through evil.
     (evil-define-key 'insert corfu-map (kbd "C-SPC") #'corfu-popupinfo-toggle)))
 
-;; Eglot needs yasnippet for LSP snippet completions.  Tab/S-Tab jump between
-;; placeholders, but the completion popup gets Tab first while it is open.
+;; Needed for LSP snippet completions. The popup gets Tab first while open.
 (use-package yasnippet
   :hook (eglot-managed-mode . yas-minor-mode)
   :config

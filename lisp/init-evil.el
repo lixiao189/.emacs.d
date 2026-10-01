@@ -3,8 +3,7 @@
 (use-package evil
   :demand t
   :init
-  ;; Emacs 31 globalized modes no longer define `evil-mode-buffers', which
-  ;; evil 1.15 reads in `evil-initializing-p'.
+  ;; evil 1.15 reads this, but Emacs 31 no longer defines it.
   (defvar evil-mode-buffers nil)
   (setq evil-want-integration t
         evil-want-keybinding nil          ; evil-collection handles it
@@ -26,10 +25,24 @@
         evil-kill-on-visual-paste nil)
   :config
   (evil-mode 1)
-  ;; Keep the visual selection when indenting (LazyVim: < and >).
+  ;; Keep the selection after < and > (LazyVim).
   (evil-define-key 'visual 'global
-    (kbd ">") (lambda () (interactive) (call-interactively #'evil-shift-right) (evil-normal-state) (evil-visual-restore))
-    (kbd "<") (lambda () (interactive) (call-interactively #'evil-shift-left) (evil-normal-state) (evil-visual-restore))))
+    ">" #'my/visual-shift-right
+    "<" #'my/visual-shift-left))
+
+(defun my/visual-shift-right ()
+  "Indent the selection and keep it selected."
+  (interactive)
+  (call-interactively #'evil-shift-right)
+  (evil-normal-state)
+  (evil-visual-restore))
+
+(defun my/visual-shift-left ()
+  "Dedent the selection and keep it selected."
+  (interactive)
+  (call-interactively #'evil-shift-left)
+  (evil-normal-state)
+  (evil-visual-restore))
 
 (use-package evil-collection
   :after evil
@@ -38,13 +51,13 @@
   (setq evil-collection-setup-minibuffer nil
         evil-collection-key-blacklist '("SPC" "M-SPC"))
   :config
-  ;; Only the modes we use: cheaper startup than (evil-collection-init).
+  ;; Only the modes we use; faster than setting up all of them.
   (evil-collection-init
    '(dired help info xref compile grep ibuffer flymake eglot eldoc
      magit magit-todos diff-hl package-menu custom ediff eshell
      corfu vertico consult embark which-key calendar)))
 
-;; gsa / gsd / gsr = mini.surround (LazyVim); ys/cs/ds/S keep working too.
+;; gsa/gsd/gsr like LazyVim's mini.surround; ys/cs/ds/S still work.
 (use-package evil-surround
   :after evil
   :demand t
@@ -56,50 +69,65 @@
     "gsr" #'evil-surround-change)
   (evil-define-key 'visual 'global "gsa" #'evil-surround-region))
 
-;; gc / gcc = comment operator (+ gco / gcO like LazyVim).
+;; gc/gcc comment, gco/gcO add a comment below/above (LazyVim).
 (use-package evil-commentary
   :after evil
   :demand t
   :config
   (evil-commentary-mode 1)
   (evil-define-key 'normal 'global
-    "gco" (lambda () (interactive)
-            (end-of-line) (newline-and-indent) (insert comment-start " ")
-            (evil-insert-state))
-    "gcO" (lambda () (interactive)
-            (beginning-of-line) (open-line 1) (insert comment-start " ")
-            (indent-according-to-mode) (evil-insert-state))))
+    "gco" #'my/comment-below
+    "gcO" #'my/comment-above))
 
-;; mini.ai (LazyVim): af/if function, ac/ic class, aa/ia argument,
-;; ao/io block/conditional/loop, plus ]f / [f motions, via tree-sitter.
+(defun my/comment-below ()
+  "Start a comment on a new line below."
+  (interactive)
+  (end-of-line)
+  (newline-and-indent)
+  (insert comment-start " ")
+  (evil-insert-state))
+
+(defun my/comment-above ()
+  "Start a comment on a new line above."
+  (interactive)
+  (beginning-of-line)
+  (open-line 1)
+  (insert comment-start " ")
+  (indent-according-to-mode)
+  (evil-insert-state))
+
+;; Tree-sitter text objects like LazyVim's mini.ai:
+;; f function, c class, a argument, o block/conditional/loop; ]f/[f jump.
 (use-package evil-textobj-tree-sitter
   :after evil
   :demand t
   :config
-  (define-key evil-outer-text-objects-map "f"
-              (evil-textobj-tree-sitter-get-textobj "function.outer"))
-  (define-key evil-inner-text-objects-map "f"
-              (evil-textobj-tree-sitter-get-textobj "function.inner"))
-  (define-key evil-outer-text-objects-map "c"
-              (evil-textobj-tree-sitter-get-textobj "class.outer"))
-  (define-key evil-inner-text-objects-map "c"
-              (evil-textobj-tree-sitter-get-textobj "class.inner"))
-  (define-key evil-outer-text-objects-map "a"
-              (evil-textobj-tree-sitter-get-textobj "parameter.outer"))
-  (define-key evil-inner-text-objects-map "a"
-              (evil-textobj-tree-sitter-get-textobj "parameter.inner"))
-  (define-key evil-outer-text-objects-map "o"
-              (evil-textobj-tree-sitter-get-textobj
-                  ("conditional.outer" "loop.outer" "block.outer")))
-  (define-key evil-inner-text-objects-map "o"
-              (evil-textobj-tree-sitter-get-textobj
-                  ("conditional.inner" "loop.inner" "block.inner")))
-  ;; Jump between functions.
+  ;; `evil-textobj-tree-sitter-get-textobj' is a macro, so no loop here.
+  (let ((outer evil-outer-text-objects-map)
+        (inner evil-inner-text-objects-map))
+    (define-key outer "f" (evil-textobj-tree-sitter-get-textobj "function.outer"))
+    (define-key inner "f" (evil-textobj-tree-sitter-get-textobj "function.inner"))
+    (define-key outer "c" (evil-textobj-tree-sitter-get-textobj "class.outer"))
+    (define-key inner "c" (evil-textobj-tree-sitter-get-textobj "class.inner"))
+    (define-key outer "a" (evil-textobj-tree-sitter-get-textobj "parameter.outer"))
+    (define-key inner "a" (evil-textobj-tree-sitter-get-textobj "parameter.inner"))
+    (define-key outer "o" (evil-textobj-tree-sitter-get-textobj
+                            ("conditional.outer" "loop.outer" "block.outer")))
+    (define-key inner "o" (evil-textobj-tree-sitter-get-textobj
+                            ("conditional.inner" "loop.inner" "block.inner"))))
   (evil-define-key 'normal 'global
-    "]f" (lambda () (interactive) (evil-textobj-tree-sitter-goto-textobj "function.outer"))
-    "[f" (lambda () (interactive) (evil-textobj-tree-sitter-goto-textobj "function.outer" t))))
+    "]f" #'my/next-function
+    "[f" #'my/previous-function))
 
-;; `s` = flash.nvim-style jump.
+(defun my/next-function ()
+  (interactive)
+  (evil-textobj-tree-sitter-goto-textobj "function.outer"))
+
+(defun my/previous-function ()
+  (interactive)
+  (evil-textobj-tree-sitter-goto-textobj "function.outer" t))
+
+;; s: jump anywhere, like flash.nvim.
 (use-package avy
   :commands (avy-goto-char-timer)
   :init

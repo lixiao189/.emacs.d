@@ -7,8 +7,7 @@
   (setq markdown-enable-math t                   ; fontify $..$ and $$..$$
         markdown-fontify-code-blocks-natively t))
 
-;; xwidget-webkit-mode is special-mode derived, so evil puts it in motion state where j/k
-;; just move an invisible point.  Map the usual vim scroll keys to webkit scrolling.
+;; Vim scroll keys in the webkit preview (evil's motion state would only move point).
 (with-eval-after-load 'xwidget
   (with-eval-after-load 'evil
     (evil-define-key 'motion xwidget-webkit-mode-map
@@ -21,9 +20,10 @@
       "gg" #'xwidget-webkit-scroll-top
       "G" #'xwidget-webkit-scroll-bottom)))
 
-;;;; Live preview inside Emacs (xwidget-webkit) ------------------------------------------
-;; Rendering happens in the webkit widget (markdown-it + KaTeX from jsdelivr), so no
-;; pandoc/multimarkdown is needed. Edits are pushed with JS, which keeps it flicker-free.
+;;;; Live preview (xwidget-webkit)
+
+;; The page renders with markdown-it + KaTeX from jsdelivr, so no pandoc is
+;; needed. Edits are pushed in through JS, so there is no reload flicker.
 (defconst my/markdown-preview-template
   "<!doctype html>
 <html>
@@ -168,10 +168,8 @@ The preview follows edits and scrolls together with the editor window."
   (if (buffer-live-p my/markdown-preview--buffer)
       (my/markdown-preview--close)
     (let ((file (expand-file-name "var/markdown-preview.html" user-emacs-directory))
-          (html my/markdown-preview-template)
-          (win (selected-window))
-          preview)
-      ;; {{init}} goes last so "{{bg}}" etc. in the document itself is left alone.
+          (html my/markdown-preview-template))
+      ;; {{init}} last, so placeholders inside the document text are left alone.
       (dolist (kv `(("{{bg}}" . ,(face-background 'default))
                     ("{{fg}}" . ,(face-foreground 'default))
                     ("{{link}}" . ,(face-foreground 'link nil 'default))
@@ -181,11 +179,10 @@ The preview follows edits and scrolls together with the editor window."
         (setq html (string-replace (car kv) (cdr kv) html)))
       (let ((coding-system-for-write 'utf-8))
         (write-region html nil file nil 'silent))
-      (select-window (split-window-right))
-      (xwidget-webkit-browse-url (concat "file://" file) t)
-      (setq preview (current-buffer))
-      (select-window win)
-      (setq my/markdown-preview--buffer preview)
+      (setq my/markdown-preview--buffer
+            (with-selected-window (split-window-right)
+              (xwidget-webkit-browse-url (concat "file://" file) t)
+              (current-buffer)))
       (add-hook 'after-change-functions #'my/markdown-preview--schedule nil t)
       (add-hook 'window-scroll-functions #'my/markdown-preview--scroll nil t)
       (add-hook 'kill-buffer-hook #'my/markdown-preview--close nil t))))

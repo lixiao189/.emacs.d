@@ -1,6 +1,6 @@
 ;;; init-core.el --- Packages, macOS, sane defaults, performance -*- lexical-binding: t; -*-
 
-;;;; Package management ------------------------------------------------------
+;;;; Packages
 (require 'package)
 (setq package-archives
       '(("gnu"    . "https://elpa.gnu.org/packages/")
@@ -13,8 +13,9 @@
       use-package-always-defer t      ; everything lazy unless it says otherwise
       use-package-expand-minimally t)
 
-;;;; macOS --------------------------------------------------------------------
-;; Option = Meta (left), right Option stays free for typing symbols. Cmd = Super.
+;;;; macOS
+
+;; Left Option = Meta, right Option types symbols, Cmd = Super.
 (setq ns-alternate-modifier 'meta
       ns-right-alternate-modifier 'none
       ns-command-modifier 'super
@@ -26,28 +27,27 @@
       ns-use-proxy-icon nil
       delete-by-moving-to-trash t)
 
-;; exec-path-from-shell spawns a login shell (~100-300ms). Set PATH by hand.
-(let ((dirs (list "/opt/homebrew/bin" "/opt/homebrew/sbin" "/usr/local/bin"
-                  "/opt/homebrew/opt/rustup/bin" ; rust-analyzer, rustfmt (brew rustup)
-                  (expand-file-name "~/.local/bin")
-                  (expand-file-name "~/go/bin")
-                  (expand-file-name "~/.cargo/bin")
-                  (expand-file-name "~/.emacs.d/bin"))))
-  (dolist (d dirs)
-    (when (file-directory-p d)
-      (add-to-list 'exec-path d)
-      (unless (string-match-p (regexp-quote d) (getenv "PATH"))
-        (setenv "PATH" (concat d ":" (getenv "PATH")))))))
+;; Set PATH by hand; exec-path-from-shell is too slow at startup.
+(dolist (dir (list "/opt/homebrew/bin" "/opt/homebrew/sbin" "/usr/local/bin"
+                   "/opt/homebrew/opt/rustup/bin" ; rust-analyzer, rustfmt
+                   (expand-file-name "~/.local/bin")
+                   (expand-file-name "~/go/bin")
+                   (expand-file-name "~/.cargo/bin")
+                   (expand-file-name "~/.emacs.d/bin")))
+  (when (file-directory-p dir)
+    (add-to-list 'exec-path dir)
+    (unless (string-match-p (regexp-quote dir) (getenv "PATH"))
+      (setenv "PATH" (concat dir ":" (getenv "PATH"))))))
 
-;; BSD ls has no --group-directories-first; use GNU ls when available.
+;; Prefer GNU ls (gls) for --group-directories-first.
 (if-let* ((gls (executable-find "gls")))
     (setq insert-directory-program gls
           dired-listing-switches "-alh --group-directories-first")
   (setq dired-use-ls-dired nil
         dired-listing-switches "-alh"))
 
-;;;; Performance ---------------------------------------------------------------
-(setq read-process-output-max (* 1024 1024)   ; LSP talks big JSON
+;;;; Performance
+(setq read-process-output-max (* 1024 1024)   ; LSP sends large JSON
       process-adaptive-read-buffering t
       fast-but-imprecise-scrolling t
       redisplay-skip-fontification-on-input t
@@ -57,13 +57,13 @@
       highlight-nonselected-windows nil
       idle-update-delay 1.0
       jit-lock-stealth-time nil
-      vc-handled-backends '(Git)             ; don't probe SVN/Hg/... on every file
+      vc-handled-backends '(Git)             ; don't probe other VCSs
       ffap-machine-p-known 'reject
       inhibit-x-resources t)
 (setq-default bidi-display-reordering 'left-to-right
               bidi-paragraph-direction 'left-to-right)
 
-;;;; Files & state ---------------------------------------------------------------
+;;;; Files and state
 (defconst my/var-dir (expand-file-name "var/" user-emacs-directory))
 
 (setq make-backup-files nil
@@ -100,7 +100,7 @@
               tab-width 4
               fill-column 88)
 
-;; Turn state modes on after startup so they don't add to the load time.
+;; Enable these after startup to keep load time down.
 (add-hook 'emacs-startup-hook
           (lambda ()
             (let ((inhibit-message t))

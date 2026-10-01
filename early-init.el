@@ -1,6 +1,6 @@
 ;;; early-init.el --- Runs before package init and the first frame -*- lexical-binding: t; -*-
 
-;; Startup: no GC during init, no file-handler lookups, restored afterwards.
+;; No GC or file-name handlers during startup; restored afterwards.
 (setq gc-cons-threshold most-positive-fixnum
       gc-cons-percentage 0.6)
 
@@ -10,20 +10,20 @@
 (add-hook 'emacs-startup-hook
           (lambda ()
             (setq file-name-handler-alist my/default-file-name-handler-alist
-                  gc-cons-threshold (* 64 1024 1024)   ; 64MB: fewer GC pauses while typing
+                  gc-cons-threshold (* 64 1024 1024)   ; 64MB
                   gc-cons-percentage 0.2)))
 
-;; Packages: quickstart = one pre-generated autoload file instead of scanning elpa/.
+;; Load one pre-generated autoloads file instead of scanning elpa/.
 (setq package-quickstart t
       package-native-compile t)
 
-;; Native compilation: quiet, async, keep the eln cache out of the config dir.
+;; Quiet async native compilation, cache kept under var/.
 (setq native-comp-async-report-warnings-errors 'silent
       native-comp-jit-compilation t)
 (when (fboundp 'startup-redirect-eln-cache)
   (startup-redirect-eln-cache (expand-file-name "var/eln-cache/" user-emacs-directory)))
 
-;; Avoid frame resizes / redraws / fonts work while starting up.
+;; Skip frame resizing and other redraw work during startup.
 (setq frame-inhibit-implied-resize t
       inhibit-compacting-font-caches t
       frame-resize-pixelwise t
@@ -37,7 +37,7 @@
       byte-compile-warnings '(not obsolete)
       warning-suppress-log-types '((comp) (bytecomp)))
 
-;; UI chrome off before the first frame is drawn (no flash, no relayout).
+;; Hide UI chrome before the first frame is drawn.
 (push '(tool-bar-lines . 0) default-frame-alist)
 (push '(vertical-scroll-bars) default-frame-alist)
 (push '(horizontal-scroll-bars) default-frame-alist)

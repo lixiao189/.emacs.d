@@ -1,9 +1,6 @@
 ;;; init-git.el --- Magit, git gutter -*- lexical-binding: t; -*-
 
-;; Point/scroll saved across a refresh triggered from a visual selection.
-(defvar-local my/magit--refresh-state nil)
-
-;; Git manager (LazyVim lazygit). Keys are under <leader>g in init-keys.el.
+;; Keys are under SPC g in init-keys.el.
 (use-package magit
   :init
   (setq transient-levels-file (concat my/var-dir "transient-levels.el")
@@ -14,34 +11,36 @@
         magit-bury-buffer-function #'magit-restore-window-configuration
         magit-diff-refine-hunk t
         magit-save-repository-buffers 'dontask)
-  ;; Keep point and scroll position when staging/unstaging a visual
-  ;; selection, instead of jumping back to the section start (Doom).
-  (add-hook 'magit-pre-refresh-hook
-            (defun my/magit-save-window-state-h ()
-              (when (use-region-p)
-                (setq my/magit--refresh-state
-                      (list (current-buffer) (region-beginning) (window-start))))))
-  (add-hook 'magit-post-refresh-hook
-            (defun my/magit-restore-window-state-h ()
-              (pcase-let ((`(,buf ,pt ,start) my/magit--refresh-state))
-                (when (and buf (eq buf (current-buffer)))
-                  (goto-char pt)
-                  (set-window-start nil start t)
-                  (kill-local-variable 'my/magit--refresh-state)))))
-  ;; Clickable URLs in the process buffer.
+  (add-hook 'magit-pre-refresh-hook #'my/magit-save-window-state-h)
+  (add-hook 'magit-post-refresh-hook #'my/magit-restore-window-state-h)
   (add-hook 'magit-process-mode-hook #'goto-address-mode)
-  ;; Start the commit message in insert state when it is empty, otherwise
-  ;; normal state (amend/reword).
-  (add-hook 'git-commit-setup-hook
-            (defun my/git-commit-insert-state-maybe-h ()
-              (when (and (bound-and-true-p evil-local-mode)
-                         (not (evil-emacs-state-p))
-                         (bobp) (eolp))
-                (evil-insert-state)))))
+  (add-hook 'git-commit-setup-hook #'my/git-commit-insert-state-maybe-h))
+
+;; Keep point and scroll when staging a visual selection, instead of
+;; jumping back to the section start (Doom).
+(defvar-local my/magit--refresh-state nil)
+
+(defun my/magit-save-window-state-h ()
+  (when (use-region-p)
+    (setq my/magit--refresh-state
+          (list (current-buffer) (region-beginning) (window-start)))))
+
+(defun my/magit-restore-window-state-h ()
+  (pcase-let ((`(,buf ,pos ,start) my/magit--refresh-state))
+    (when (eq buf (current-buffer))
+      (goto-char pos)
+      (set-window-start nil start t)
+      (kill-local-variable 'my/magit--refresh-state))))
+
+(defun my/git-commit-insert-state-maybe-h ()
+  "Start in insert state for a new message, normal state when amending."
+  (when (and (bound-and-true-p evil-local-mode)
+             (not (evil-emacs-state-p))
+             (bobp) (eolp))
+    (evil-insert-state)))
 
 (defun my/magit-quit (&optional kill-buffer)
-  "Bury the current magit buffer; kill all of the repo's magit buffers
-when no other magit window for it is left (Doom `+magit/quit')."
+  "Bury this magit buffer; kill the repo's magit buffers if none is left visible."
   (interactive "P")
   (let ((topdir (magit-toplevel)))
     (funcall magit-bury-buffer-function kill-buffer)
@@ -53,7 +52,7 @@ when no other magit window for it is left (Doom `+magit/quit')."
       (my/magit-quit-all))))
 
 (defun my/magit-quit-all ()
-  "Kill all magit buffers for the current repository."
+  "Kill the current repo's magit buffers, except ones running a process."
   (interactive)
   (dolist (buf (magit-mode-get-buffers))
     (when (buffer-live-p buf)
@@ -61,15 +60,14 @@ when no other magit window for it is left (Doom `+magit/quit')."
         (unless (and proc (process-live-p proc))
           (kill-buffer buf))))))
 
-;; Doom's evil tweaks on top of evil-collection-magit. Folds go under z
-;; (za/zo/zc/z1-z4, stash moves to Z) like in code buffers.
+;; Doom's evil tweaks for magit. Folds use z (za/zo/zc/z1-z4); stash moves to Z.
 (setq evil-collection-magit-use-z-for-folds t
       evil-collection-magit-section-use-z-for-folds t)
 
 (defun my/magit-evil-setup-h (mode &rest _)
-  "Extra vim-isms for magit, run after evil-collection sets it up."
+  "Extra evil keys for magit, after evil-collection sets it up."
   (when (eq mode 'magit)
-    ;; q is enough; ESC is too easy to hit by accident in the status buffer.
+    ;; Don't quit status on a stray ESC; q does that.
     (evil-define-key* 'normal magit-status-mode-map [escape] nil)
     (evil-define-key* '(normal visual) magit-mode-map
       "q"  #'my/magit-quit
@@ -86,7 +84,7 @@ when no other magit window for it is left (Doom `+magit/quit')."
                        magit-revision-mode-map magit-process-mode-map
                        magit-diff-mode-map))
       (evil-define-key* 'normal map [tab] #'magit-section-toggle))
-    ;; 1-4 / M-1..M-4 / 0 mask count prefixes; z1-z4 cover them.
+    ;; Free digits for count prefixes; z1-z4 replace them.
     (dolist (key '("1" "2" "3" "4" "0" "M-1" "M-2" "M-3" "M-4"))
       (define-key magit-section-mode-map (kbd key) nil t))
     ;; Move commits with gj/gk too (M-j/M-k still work).
@@ -96,7 +94,7 @@ when no other magit window for it is left (Doom `+magit/quit')."
         "gk" #'git-rebase-move-line-up))))
 (add-hook 'evil-collection-setup-hook #'my/magit-evil-setup-h)
 
-;; Git gutter (LazyVim gitsigns).
+;; Git gutter.
 (use-package diff-hl
   :hook ((prog-mode . diff-hl-mode)
          (conf-mode . diff-hl-mode)

@@ -14,7 +14,7 @@ Personal Emacs 31 config for macOS: Vim emulation (evil), LSP via eglot (C++/Go/
 - Custom helper functions and leader definitions use the `my/` prefix (`my/leader`, `my/root`, ...).
 - Runtime state is kept out of the config tree under `var/` (eln-cache, recentf, savehist, projects, `custom.el`). Customize output goes to `var/custom.el`, loaded at the end of `init.el`.
 - `package-quickstart.el` and `.elc` are generated files (`package-quickstart t`). Do not hand-edit them. Refresh with `M-x package-quickstart-refresh` after package changes. `elpa/`, `tree-sitter/` and `var/` are installed or generated artifacts.
-- Tree-sitter: grammars are listed in `treesit-language-source-alist` in `init-lsp.el` (shared) and each `lisp/lang/init-<lang>.el`. `treesit-enabled-modes t` remaps `*-mode` to `*-ts-mode` when a grammar is available (Emacs 31 feature). Add a new language as its own `lisp/lang/init-<lang>.el` (grammar, indent, eglot server, formatter, `my/lang-setup`).
+- Tree-sitter: grammars are listed in `treesit-language-source-alist` in `init-lsp.el` (shared) and each `lisp/lang/init-<lang>.el`. `treesit-enabled-modes t` remaps `*-mode` to `*-ts-mode` when a grammar is available (Emacs 31 feature). Add a new language as its own `lisp/lang/init-<lang>.el` (`my/add-grammars`, indent, eglot server, `my/lang-setup`, `my/eglot-workspace-config`, formatter).
 
 ## Commands
 

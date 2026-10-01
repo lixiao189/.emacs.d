@@ -12,98 +12,123 @@
     :global-prefix "M-SPC"
     :non-normal-prefix "M-SPC"))
 
-;;;; Helpers -------------------------------------------------------------------------
+;;;; Helpers
+
+;; "root" = project root (LazyVim "root dir"), "cwd" = `default-directory'.
 (defun my/root ()
-  "Project root, else `default-directory' (LazyVim \"root dir\")."
-  (or (when-let* ((p (project-current))) (project-root p))
+  "Project root, else `default-directory'."
+  (or (when-let* ((project (project-current))) (project-root project))
       default-directory))
 
+(defun my/symbol-at-point ()
+  (thing-at-point 'symbol t))
+
+;; Find and grep
 (defun my/find-file-root () (interactive) (consult-fd (my/root)))
 (defun my/find-file-cwd  () (interactive) (consult-fd default-directory))
-(defun my/grep-root () (interactive) (consult-ripgrep (my/root)))
-(defun my/grep-cwd  () (interactive) (consult-ripgrep default-directory))
-(defun my/grep-word-root ()
-  (interactive) (consult-ripgrep (my/root) (thing-at-point 'symbol t)))
-(defun my/grep-word-cwd ()
-  (interactive) (consult-ripgrep default-directory (thing-at-point 'symbol t)))
-(defun my/find-config () (interactive) (consult-fd user-emacs-directory))
+(defun my/find-config    () (interactive) (consult-fd user-emacs-directory))
+(defun my/grep-root      () (interactive) (consult-ripgrep (my/root)))
+(defun my/grep-cwd       () (interactive) (consult-ripgrep default-directory))
+(defun my/grep-word-root () (interactive) (consult-ripgrep (my/root) (my/symbol-at-point)))
+(defun my/grep-word-cwd  () (interactive) (consult-ripgrep default-directory (my/symbol-at-point)))
+
+;; Files, explorer, terminal
+(defun my/new-file ()
+  (interactive)
+  (find-file (read-file-name "New file: " default-directory)))
+
 (defun my/explorer (dir)
-  "Toggle the treemacs sidebar, showing DIR as its only project.
-Like Doom's `+treemacs/toggle': the workspace is replaced rather than
-extended, so a persisted parent (or stale) project can't shadow DIR."
+  "Toggle the treemacs sidebar with DIR as its only project.
+Replacing the workspace (like Doom) stops a persisted project from
+shadowing DIR."
   (require 'treemacs)
   (if (eq (treemacs-current-visibility) 'visible)
       (delete-window (treemacs-get-local-window))
     (let ((dir (treemacs-canonical-path dir)))
       (treemacs--show-single-project dir (file-name-nondirectory dir)))))
+
 (defun my/explorer-root () (interactive) (my/explorer (my/root)))
 (defun my/explorer-cwd  () (interactive) (my/explorer default-directory))
+
 (defun my/terminal-root ()
-  (interactive) (let ((default-directory (my/root))) (eshell 'new)))
-(defun my/new-file ()
-  (interactive) (find-file (read-file-name "New file: " default-directory)))
-
-(defun my/kill-other-buffers ()
   (interactive)
-  (mapc #'kill-buffer (delq (current-buffer) (seq-filter #'buffer-file-name (buffer-list)))))
+  (let ((default-directory (my/root)))
+    (eshell 'new)))
 
-(defun my/next-buffer-nonspecial () (interactive) (next-buffer))
-(defun my/prev-buffer-nonspecial () (interactive) (previous-buffer))
+;; Buffers and windows
+(defun my/kill-other-buffers ()
+  "Kill every file buffer except the current one."
+  (interactive)
+  (mapc #'kill-buffer
+        (delq (current-buffer) (seq-filter #'buffer-file-name (buffer-list)))))
 
 (defun my/toggle-maximize ()
   (interactive)
   (if (one-window-p) (winner-undo) (delete-other-windows)))
 
+(defun my/window-taller   () (interactive) (enlarge-window 2))
+(defun my/window-shorter  () (interactive) (shrink-window 2))
+(defun my/window-narrower () (interactive) (shrink-window-horizontally 2))
+(defun my/window-wider    () (interactive) (enlarge-window-horizontally 2))
+
 (defun my/clear-search-and-escape ()
-  "<esc>: clear search highlight, like LazyVim."
+  "Clear search highlight and return to normal state."
   (interactive)
   (evil-ex-nohighlight)
   (evil-force-normal-state))
 
+;; Diagnostics and code
 (defun my/line-diagnostics ()
   (interactive)
-  (let ((d (flymake-diagnostics (line-beginning-position) (line-end-position))))
-    (if d
-        (message "%s" (mapconcat #'flymake-diagnostic-text d "\n"))
-      (message "No diagnostics on this line"))))
+  (if-let* ((diags (flymake-diagnostics (line-beginning-position) (line-end-position))))
+      (message "%s" (mapconcat #'flymake-diagnostic-text diags "\n"))
+    (message "No diagnostics on this line")))
 
-(defun my/goto-diag (dir severity)
+(defun my/goto-diag (direction severity)
+  "Return a command jumping to the next/previous diagnostic of SEVERITY."
   (lambda ()
     (interactive)
-    (if (eq dir 'next)
+    (if (eq direction 'next)
         (flymake-goto-next-error 1 severity t)
       (flymake-goto-prev-error 1 severity t))))
 
+(defun my/code-action-source ()
+  (interactive)
+  (eglot-code-actions nil nil "source" t))
+
+;; UI toggles
 (defun my/toggle-relative-numbers ()
   (interactive)
   (setq display-line-numbers-type
         (if (eq display-line-numbers-type 'relative) t 'relative))
-  (display-line-numbers-mode -1) (display-line-numbers-mode 1))
+  (display-line-numbers-mode -1)
+  (display-line-numbers-mode 1))
 
 (defun my/toggle-autoformat ()
-  (interactive) (apheleia-mode 'toggle)
+  (interactive)
+  (apheleia-mode 'toggle)
   (message "Auto format: %s" (if apheleia-mode "on" "off")))
 
-(defun my/code-action-source ()
-  (interactive) (eglot-code-actions nil nil "source" t))
+;;;; Non-leader keys
 
-;;;; Non-leader keys -----------------------------------------------------------------
+;; Let windmove enter treemacs, which is marked `no-other-window'.
+(setq windmove-allow-all-windows t)
+
 (general-def :states '(normal motion)
-  ;; windows (<C-h/j/k/l>)
+  ;; windows
   "C-h" #'evil-window-left
   "C-j" #'evil-window-down
   "C-k" #'evil-window-up
   "C-l" #'evil-window-right
-  ;; resize
-  "C-<up>"    (lambda () (interactive) (enlarge-window 2))
-  "C-<down>"  (lambda () (interactive) (shrink-window 2))
-  "C-<left>"  (lambda () (interactive) (shrink-window-horizontally 2))
-  "C-<right>" (lambda () (interactive) (enlarge-window-horizontally 2))
+  "C-<up>"    #'my/window-taller
+  "C-<down>"  #'my/window-shorter
+  "C-<left>"  #'my/window-narrower
+  "C-<right>" #'my/window-wider
   ;; buffers
-  "H" #'my/prev-buffer-nonspecial
-  "L" #'my/next-buffer-nonspecial
-  "[b"  #'my/prev-buffer-nonspecial
-  "]b"  #'my/next-buffer-nonspecial
+  "H"  #'previous-buffer
+  "L"  #'next-buffer
+  "[b" #'previous-buffer
+  "]b" #'next-buffer
   ;; LSP / goto
   "gd" #'xref-find-definitions
   "gr" #'xref-find-references
@@ -112,7 +137,7 @@ extended, so a persisted parent (or stale) project can't shadow DIR."
   "gD" #'xref-find-definitions-other-window
   "K"  #'eldoc-doc-buffer
   "gK" #'eldoc-doc-buffer
-  ;; diagnostics / errors
+  ;; diagnostics
   "]d" (my/goto-diag 'next nil)
   "[d" (my/goto-diag 'prev nil)
   "]e" (my/goto-diag 'next :error)
@@ -121,31 +146,27 @@ extended, so a persisted parent (or stale) project can't shadow DIR."
   "[w" (my/goto-diag 'prev :warning)
   "]q" #'next-error
   "[q" #'previous-error
-  ;; git hunks (gitsigns)
+  ;; git hunks
   "]h" #'diff-hl-next-hunk
   "[h" #'diff-hl-previous-hunk
-  ;; esc clears search highlight
   "<escape>" #'my/clear-search-and-escape)
-;; treemacs' window is `no-other-window', which windmove skips by default.
-(setq windmove-allow-all-windows t)
 
-;; treemacs has its own evil state, so the normal/motion bindings above don't
-;; apply there. Without this C-l can't leave the sidebar (C-j/C-k stay project nav).
+;; treemacs has its own evil state; let C-h/C-l leave the sidebar.
 (with-eval-after-load 'treemacs-evil
   (general-def :keymaps 'evil-treemacs-state-map
     "C-h" #'evil-window-left
     "C-l" #'evil-window-right))
 
 (general-def :states '(normal visual insert emacs)
-  "C-s" #'save-buffer                      ; <C-s> save
-  "M-j" #'move-text-down                   ; <A-j> / <A-k> move lines
+  "C-s" #'save-buffer
+  "M-j" #'move-text-down
   "M-k" #'move-text-up
   "C-." #'embark-act)
 
 ;; ESC quits the minibuffer straight away.
 (keymap-set minibuffer-local-map "<escape>" #'abort-minibuffers)
 
-;;;; <leader> -------------------------------------------------------------------------
+;;;; Leader keys
 (my/leader
   "SPC" '(my/find-file-root :which-key "Find Files (Root Dir)")
   "," '(consult-buffer :which-key "Switch Buffer")
@@ -282,7 +303,7 @@ extended, so a persisted parent (or stale) project can't shadow DIR."
   "xq" '(consult-compile-error :which-key "Quickfix List")
   "xl" '(flymake-show-buffer-diagnostics :which-key "Location List"))
 
-;; Markdown only: live preview in a side window (LazyVim <leader>cp).
+;; Markdown only.
 (my/leader
   :keymaps 'markdown-mode-map
   "cp" '(my/markdown-preview :which-key "Markdown Preview"))
