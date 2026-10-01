@@ -7,13 +7,38 @@
         doom-themes-enable-italic t)
   (load-theme 'doom-tokyo-night t))
 
-;; Font: first one that exists.
+;; Fonts: first installed candidate wins (macOS, then Windows, then Linux).
+(defvar my/mono-fonts '("JetBrainsMono Nerd Font Mono" "JetBrains Mono" "Fira Code"
+                        "SF Mono" "Menlo" "Consolas" "DejaVu Sans Mono"))
+(defvar my/cjk-fonts '("PingFang SC" "Hiragino Sans GB" "Heiti SC"
+                       "Microsoft YaHei" "SimHei"
+                       "Noto Sans CJK SC" "Source Han Sans SC" "WenQuanYi Micro Hei"))
+
+(defun my/first-font (families frame)
+  (seq-find (lambda (f) (find-font (font-spec :family f) frame)) families))
+
+(defun my/font-extents (family frame)
+  "Return (ASCENT . DESCENT) of FAMILY opened at 100px on FRAME."
+  (when-let* ((entity (find-font (font-spec :family family) frame))
+              (info (query-font (open-font entity 100 frame))))
+    (cons (aref info 4) (aref info 5))))
+
 (defun my/setup-font (&optional frame)
   (when (display-graphic-p frame)
-    (when-let* ((font (seq-find (lambda (f) (find-font (font-spec :name f)))
-                                '("JetBrainsMono Nerd Font Mono" "JetBrains Mono"
-                                  "Fira Code" "SF Mono" "Menlo"))))
-      (set-face-attribute 'default frame :family font :height 140))))
+    (when-let* ((font (my/first-font my/mono-fonts frame)))
+      (set-face-attribute 'default frame :family font :height 140))
+    ;; Shrink the CJK font to fit the mono font's height, so lines stay even.
+    (when-let* ((cjk (my/first-font my/cjk-fonts frame)))
+      (let ((mono (my/font-extents (face-attribute 'default :family frame) frame))
+            (wide (my/font-extents cjk frame)))
+        (when (and mono wide (> (car wide) 0) (> (cdr wide) 0))
+          (let ((scale (min 1.0
+                            (/ (float (car mono)) (car wide))
+                            (/ (float (cdr mono)) (cdr wide)))))
+            (setf (alist-get (regexp-quote cjk) face-font-rescale-alist nil nil #'equal)
+                  (/ (ffloor (* scale 100)) 100)))))
+      (dolist (charset '(han cjk-misc kana bopomofo))
+        (set-fontset-font t charset (font-spec :family cjk) frame)))))
 (my/setup-font)
 (add-hook 'after-make-frame-functions #'my/setup-font)
 
