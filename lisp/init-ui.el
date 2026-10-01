@@ -202,9 +202,14 @@
         dashboard-item-shortcuts '((recents . "r") (bookmarks . "m") (projects . "p"))
         dashboard-set-footer nil
         dashboard-banner-logo-title "Emacs")
-  ;; Also show it for `emacsclient -c` and new frames.
-  (setq initial-buffer-choice
-        (lambda () (get-buffer-create "*dashboard*")))
+  ;; Also show it for `emacsclient -c` and new frames. Skip when files are
+  ;; passed on the command line: Emacs would otherwise split the frame and
+  ;; show an empty *dashboard* above the file.
+  (when (or (daemonp) (< (length command-line-args) 2))
+    (setq initial-buffer-choice
+          (lambda ()
+            (dashboard-insert-startupify-lists)
+            (get-buffer-create dashboard-buffer-name))))
   :config
   (dashboard-setup-startup-hook)
   (with-eval-after-load 'evil
