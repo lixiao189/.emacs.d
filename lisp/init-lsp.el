@@ -36,7 +36,10 @@
         eglot-report-progress nil
         eglot-code-action-indications '(eldoc-hint)
         eldoc-echo-area-use-multiline-p 3
-        flymake-no-changes-timeout 0.5)
+        flymake-no-changes-timeout 0.5
+        ;; No on-type formatting: clangd reformats on RET, which fights
+        ;; electric-pair and leaves a stray blank line in `{|}'.
+        eglot-ignored-server-capabilities '(:documentOnTypeFormattingProvider))
   :config
   ;; Inlay hints exist but start off (LazyVim default); toggle with <leader>uh.
   (add-hook 'eglot-managed-mode-hook (lambda () (eglot-inlay-hints-mode -1)))
