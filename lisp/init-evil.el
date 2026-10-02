@@ -5,9 +5,7 @@
   :init
   ;; evil 1.15 reads this, but Emacs 31 no longer defines it.
   (defvar evil-mode-buffers nil)
-  (setq evil-want-integration t
-        evil-want-keybinding nil          ; evil-collection handles it
-        evil-want-C-u-scroll t
+  (setq evil-want-C-u-scroll t
         evil-want-C-d-scroll t
         evil-want-C-i-jump nil            ; keep TAB as TAB
         evil-want-Y-yank-to-eol t

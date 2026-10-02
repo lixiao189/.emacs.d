@@ -5,6 +5,11 @@
 
 (setq custom-file (expand-file-name "var/custom.el" user-emacs-directory))
 
+;; Read when evil loads. On first run, installing treemacs-evil (init-ui)
+;; loads evil before init-evil, so set these before any module.
+(setq evil-want-integration t
+      evil-want-keybinding nil)           ; evil-collection handles it
+
 (require 'init-core)
 (require 'init-ui)
 (require 'init-evil)

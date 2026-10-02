@@ -14,11 +14,12 @@
                   gc-cons-percentage 0.2)))
 
 ;; Load one pre-generated autoloads file instead of scanning elpa/.
-(setq package-quickstart t
-      package-native-compile t)
+;; No `package-native-compile': it compiles every .el in a package (tests,
+;; .dir-locals.el, -pkg.el) at install time; JIT compiles what actually loads.
+(setq package-quickstart t)
 
 ;; Quiet async native compilation, cache kept under var/.
-(setq native-comp-async-report-warnings-errors 'silent
+(setq native-comp-async-report-warnings-errors nil
       native-comp-jit-compilation t)
 (when (fboundp 'startup-redirect-eln-cache)
   (startup-redirect-eln-cache (expand-file-name "var/eln-cache/" user-emacs-directory)))
@@ -35,7 +36,12 @@
       use-file-dialog nil
       use-dialog-box nil
       byte-compile-warnings '(not obsolete)
-      warning-suppress-log-types '((comp) (bytecomp)))
+      ;; Third-party noise: elpa files without a lexical-binding cookie, and
+      ;; `package-quickstart-refresh' calling `package-initialize' after each
+      ;; install during init.
+      warning-suppress-log-types '((comp) (bytecomp)
+                                   (files missing-lexbind-cookie)
+                                   (package reinitialization)))
 
 ;; Hide UI chrome before the first frame is drawn.
 (push '(tool-bar-lines . 0) default-frame-alist)
