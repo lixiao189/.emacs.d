@@ -28,6 +28,11 @@
     ">" #'my/visual-shift-right
     "<" #'my/visual-shift-left))
 
+;; za/zo/zc/zR/zM need a folding backend; evil drives hideshow.
+(use-package hideshow
+  :ensure nil
+  :hook (prog-mode . hs-minor-mode))
+
 (defun my/visual-shift-right ()
   "Indent the selection and keep it selected."
   (interactive)
