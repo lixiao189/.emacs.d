@@ -16,6 +16,7 @@
 (require 'init-completion)
 (require 'init-copilot)
 (require 'init-git)
+(require 'init-term)
 (require 'init-lsp)
 (require 'init-cpp)
 (require 'init-go)

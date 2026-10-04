@@ -57,7 +57,7 @@
   ;; Only the modes we use; faster than setting up all of them.
   (evil-collection-init
    '(dired help info xref compile grep ibuffer flymake eglot eldoc
-     magit magit-todos diff-hl package-menu custom ediff eshell
+     magit magit-todos diff-hl package-menu custom ediff eshell vterm
      corfu vertico consult embark which-key calendar)))
 
 ;; gsa/gsd/gsr like LazyVim's mini.surround; ys/cs/ds/S still work.

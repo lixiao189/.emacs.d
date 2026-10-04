@@ -53,7 +53,7 @@ shadowing DIR."
 (defun my/terminal-root ()
   (interactive)
   (let ((default-directory (my/root)))
-    (eshell 'new)))
+    (vterm t)))
 
 ;; Buffers and windows
 (defun my/kill-other-buffers ()
