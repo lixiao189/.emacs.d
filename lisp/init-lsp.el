@@ -1,32 +1,5 @@
-;;; init-lsp.el --- Shared tree-sitter, eglot and formatting setup -*- lexical-binding: t; -*-
+;;; init-lsp.el --- Shared eglot and formatting setup -*- lexical-binding: t; -*-
 ;; Per-language settings live in lisp/lang/init-<lang>.el.
-
-;;;; Tree-sitter
-
-;; Shared grammars; each init-<lang>.el adds its own with `my/add-grammars'.
-(setq treesit-language-source-alist
-      '((bash  "https://github.com/tree-sitter/tree-sitter-bash" "v0.23.3")
-        (json  "https://github.com/tree-sitter/tree-sitter-json" "v0.24.8")
-        (yaml  "https://github.com/tree-sitter-grammars/tree-sitter-yaml" "v0.7.0")
-        (toml  "https://github.com/tree-sitter-grammars/tree-sitter-toml" "v0.7.0")
-        (cmake "https://github.com/uyha/tree-sitter-cmake" "v0.5.0")))
-
-(setq treesit-font-lock-level 4
-      treesit-auto-install-grammar 'ask)
-(setopt treesit-enabled-modes t)   ; use *-ts-mode when its grammar is installed
-
-(defun my/add-grammars (&rest grammars)
-  "Add GRAMMARS, each (LANG URL REVISION), to `treesit-language-source-alist'."
-  (dolist (grammar grammars)
-    (add-to-list 'treesit-language-source-alist grammar)))
-
-(defun my/treesit-install-grammars ()
-  "Install every grammar in `treesit-language-source-alist' that is missing."
-  (interactive)
-  (require 'treesit)
-  (dolist (entry treesit-language-source-alist)
-    (unless (treesit-language-available-p (car entry))
-      (treesit-install-language-grammar (car entry)))))
 
 ;;;; Eglot
 

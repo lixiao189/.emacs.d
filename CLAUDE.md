@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-Personal Emacs 31 config for macOS: Vim emulation (evil), LSP via eglot (C++/Go/Python/Rust), LazyVim-style `SPC` leader keymaps. See `README.md` for the per-file table and first-run setup (grammar install via `M-x my/treesit-install-grammars`, LSP servers via brew/go/npm).
+Personal Emacs 31 config for macOS: Vim emulation (evil), LSP via eglot (C++/Go/Python/Rust), LazyVim-style `SPC` leader keymaps. See `README.md` for the per-file table and first-run setup (LSP servers via brew/go/npm).
 
 ## Load order and architecture
 
@@ -13,8 +13,8 @@ Personal Emacs 31 config for macOS: Vim emulation (evil), LSP via eglot (C++/Go/
 - Startup speed is a design goal. Do not add `exec-path-from-shell`. PATH is set by hand in `init-core.el`. GC and file-handler tuning lives in `early-init.el` and is restored on `emacs-startup-hook`.
 - Custom helper functions and leader definitions use the `my/` prefix (`my/leader`, `my/root`, ...).
 - Runtime state is kept out of the config tree under `var/` (eln-cache, recentf, savehist, projects, `custom.el`). Customize output goes to `var/custom.el`, loaded at the end of `init.el`.
-- `package-quickstart.el` and `.elc` are generated files (`package-quickstart t`). Do not hand-edit them. Refresh with `M-x package-quickstart-refresh` after package changes. `elpa/`, `tree-sitter/` and `var/` are installed or generated artifacts.
-- Tree-sitter: grammars are listed in `treesit-language-source-alist` in `init-lsp.el` (shared) and each `lisp/lang/init-<lang>.el`. `treesit-enabled-modes t` remaps `*-mode` to `*-ts-mode` when a grammar is available (Emacs 31 feature). Add a new language as its own `lisp/lang/init-<lang>.el` (`my/add-grammars`, indent, eglot server, `my/lang-setup`, `my/eglot-workspace-config`, formatter).
+- `package-quickstart.el` and `.elc` are generated files (`package-quickstart t`). Do not hand-edit them. Refresh with `M-x package-quickstart-refresh` after package changes. `elpa/` and `var/` are installed or generated artifacts.
+- Tree-sitter is not used; languages use classic major modes. Add a new language as its own `lisp/lang/init-<lang>.el` (major-mode package if needed, indent, eglot server, `my/lang-setup`, `my/eglot-workspace-config`, formatter).
 
 ## Commands
 

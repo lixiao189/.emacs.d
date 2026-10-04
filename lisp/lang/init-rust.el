@@ -1,14 +1,9 @@
 ;;; init-rust.el --- Rust -*- lexical-binding: t; -*-
 
-(my/add-grammars
- '(rust "https://github.com/tree-sitter/tree-sitter-rust" "v0.23.3"))
+(use-package rust-mode
+  :init (setq rust-indent-offset 4))
 
-;; Emacs has no plain rust-mode, so map .rs straight to the tree-sitter mode.
-(add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-ts-mode))
-
-(setq rust-ts-mode-indent-offset 4)
-
-(my/lang-setup '(rust-ts-mode))
+(my/lang-setup '(rust-mode))
 
 ;; rust-analyzer is eglot's default server for Rust.
 (with-eval-after-load 'eglot

@@ -274,7 +274,6 @@ shadowing DIR."
   "uf" '(my/toggle-autoformat :which-key "Toggle Auto Format")
   "uh" '(eglot-inlay-hints-mode :which-key "Toggle Inlay Hints")
   "ui" '(describe-char :which-key "Inspect Pos")
-  "uI" '(treesit-explore-mode :which-key "Inspect Tree")
   "ul" '(display-line-numbers-mode :which-key "Toggle Line Numbers")
   "uL" '(my/toggle-relative-numbers :which-key "Toggle Relative Number")
   "ur" '(evil-ex-nohighlight :which-key "Clear Search Highlight")
