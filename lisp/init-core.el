@@ -80,6 +80,7 @@
       eshell-directory-name (concat my/var-dir "eshell/")
       transient-history-file (concat my/var-dir "transient-history.el")
       url-configuration-directory (concat my/var-dir "url/")
+      tramp-persistency-file-name (concat my/var-dir "tramp")
       package-user-dir (expand-file-name "elpa" user-emacs-directory)
       global-auto-revert-non-file-buffers t
       auto-revert-avoid-polling t
