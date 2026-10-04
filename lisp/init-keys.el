@@ -51,9 +51,20 @@ shadowing DIR."
 (defun my/explorer-cwd  () (interactive) (my/explorer default-directory))
 
 (defun my/terminal-root ()
+  "Toggle a vterm for the project root in a bottom window.
+One terminal per root; hiding it keeps the shell running."
   (interactive)
-  (let ((default-directory (my/root)))
-    (vterm t)))
+  (if (derived-mode-p 'vterm-mode)
+      (quit-window)
+    (let* ((root (my/root))
+           (name (format "*vterm %s*" (abbreviate-file-name root)))
+           (win (get-buffer-window name)))
+      (if win
+          (quit-window nil win)
+        (if-let* ((buf (get-buffer name)))
+            (pop-to-buffer buf)
+          (let ((default-directory root))
+            (vterm-other-window name)))))))
 
 ;; Buffers and windows
 (defun my/kill-other-buffers ()

@@ -7,7 +7,13 @@
   :init
   (setq vterm-always-compile-module t
         vterm-max-scrollback 10000
-        vterm-kill-buffer-on-exit t))
+        vterm-kill-buffer-on-exit t)
+  ;; Show terminals in a split at the bottom of the frame.  Match the
+  ;; name: vterm displays its buffer before enabling `vterm-mode'.
+  (add-to-list 'display-buffer-alist
+               '("\\`\\*vterm"
+                 (display-buffer-reuse-window display-buffer-at-bottom)
+                 (window-height . 0.3))))
 
 (provide 'init-term)
 ;;; init-term.el ends here
