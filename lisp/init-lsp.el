@@ -8,9 +8,10 @@
   ;; Inlay hints start off (LazyVim default); toggle with SPC u h.
   (eglot-inlay-hints-mode -1)
   ;; Refetch LSP candidates on each keystroke, then fall back to files/dabbrev.
+  ;; Keep it interruptible: eglot cancels the request when a key arrives,
+  ;; so typing never waits on the server.
   (setq-local completion-at-point-functions
-              (list (cape-capf-noninterruptible
-                     (cape-capf-buster #'eglot-completion-at-point))
+              (list (cape-capf-buster #'eglot-completion-at-point)
                     #'cape-file #'cape-dabbrev)))
 
 (use-package eglot
