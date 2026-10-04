@@ -33,6 +33,7 @@
                    (expand-file-name "~/.local/bin")
                    (expand-file-name "~/go/bin")
                    (expand-file-name "~/.cargo/bin")
+                   (expand-file-name "~/.local/share/fnm/aliases/default/bin") ; node (copilot, npm servers)
                    (expand-file-name "~/.emacs.d/bin")))
   (when (file-directory-p dir)
     (add-to-list 'exec-path dir)

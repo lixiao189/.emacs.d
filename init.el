@@ -14,6 +14,7 @@
 (require 'init-ui)
 (require 'init-evil)
 (require 'init-completion)
+(require 'init-copilot)
 (require 'init-git)
 (require 'init-lsp)
 (require 'init-cpp)
