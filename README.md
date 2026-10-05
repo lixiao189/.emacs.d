@@ -15,7 +15,7 @@ Fast-starting Emacs with Vim emulation, LSP (eglot) for C++/Go/Python/Rust, and 
 | `lisp/init-lsp.el` | shared eglot and apheleia setup |
 | `lisp/lang/init-cpp.el` | C/C++: 2-space indent, clangd |
 | `lisp/lang/init-go.el` | Go: go-mode, tabs, gopls settings, goimports |
-| `lisp/lang/init-python.el` | Python: basedpyright, ruff formatting |
+| `lisp/lang/init-python.el` | Python: ty (LSP), ruff linting (flymake-ruff) and formatting |
 | `lisp/lang/init-rust.el` | Rust: rust-mode, rust-analyzer (clippy checks), rustfmt |
 | `lisp/lang/init-markdown.el` | Markdown: markdown-mode, live preview with KaTeX math in an xwidget side window that scrolls with the editor (`SPC c p`) |
 | `lisp/init-keys.el` | LazyVim keymaps (`SPC` leader) |
@@ -23,7 +23,7 @@ Fast-starting Emacs with Vim emulation, LSP (eglot) for C++/Go/Python/Rust, and 
 ## First run
 Packages install automatically. Then:
 1. Install servers you lack: `brew install llvm` / `go install golang.org/x/tools/gopls@latest` /
-   `npm i -g basedpyright` (or `pipx install basedpyright`); `ruff` is used for Python formatting;
+   `uv tool install ty ruff` for Python;
    `rustup component add rust-analyzer rustfmt clippy` for Rust.
 2. Copilot: `M-x copilot-install-server`, then `M-x copilot-login` (node from fnm's default alias).
 3. Optional speed-up: `cargo install emacs-lsp-booster` (auto-detected).
