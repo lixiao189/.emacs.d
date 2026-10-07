@@ -1,13 +1,17 @@
 ;;; init-copilot.el --- GitHub Copilot inline suggestions -*- lexical-binding: t; -*-
 
-;; VS Code style ghost text: Tab accepts, C-<right> accepts the next word,
+;; VS Code style ghost text, shown after a short idle pause (M-\ requests one
+;; immediately): Tab accepts, C-<right> accepts the next word,
 ;; M-] / M-[ cycle suggestions, C-g dismisses. The completion popup keeps
 ;; Tab while it is open, like VS Code's suggest widget.
 ;; First run: M-x copilot-install-server, then M-x copilot-login.
 (use-package copilot
   :hook ((prog-mode text-mode conf-mode) . copilot-mode)
+  :bind ("M-\\" . copilot-complete)
   :init
   (setq copilot-install-dir (expand-file-name "var/copilot" user-emacs-directory)
+        ;; Only suggest after a pause in typing instead of on every keystroke.
+        copilot-idle-delay 0.4
         copilot-indent-offset-warning-disable t
         ;; Big files are sent as a `copilot-max-char' window around point,
         ;; which is plenty of context; don't warn about it.
