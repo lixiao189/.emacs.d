@@ -59,7 +59,10 @@
         corfu-cycle t
         corfu-preselect 'first
         corfu-quit-no-match 'separator
-        corfu-popupinfo-delay '(0.5 . 0.2))
+        corfu-popupinfo-delay '(0.5 . 0.2)
+        ;; Default 0.5 char fringes pad both sides of the popup.
+        corfu-left-margin-width 0
+        corfu-right-margin-width 0)
   :config
   ;; `corfu-insert' (not `corfu-complete') runs the candidate's exit
   ;; function: snippet expansion and auto-imports.
@@ -72,14 +75,6 @@
   (keymap-set corfu-map "C-k" #'corfu-previous)
   (require 'corfu-popupinfo)
   (corfu-popupinfo-mode 1)
-  ;; Corfu sizes the popup from `default-line-height', which ignores
-  ;; `line-spacing', but copies the parent's line spacing into the popup
-  ;; buffer. With the 15% spacing used for the editing frames that leaves a
-  ;; blank strip under every candidate.
-  (defun my/corfu-no-line-spacing (buffer)
-    (with-current-buffer buffer (setq-local line-spacing nil))
-    buffer)
-  (advice-add #'corfu--make-buffer :filter-return #'my/corfu-no-line-spacing)
   (with-eval-after-load 'evil
     (evil-define-key 'insert 'global (kbd "C-SPC") #'completion-at-point)
     ;; Insert-state bindings shadow `corfu-map', so bind through evil.
