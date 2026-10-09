@@ -24,7 +24,8 @@
       mac-command-modifier 'super
       ns-use-native-fullscreen nil
       ns-pop-up-frames nil
-      ns-use-proxy-icon nil
+      ns-use-proxy-icon nil          ; Ghostty macos-titlebar-proxy-icon is visible;
+                                     ; Emacs' proxy icon sits in the title and looks off
       delete-by-moving-to-trash t)
 
 ;; Set PATH by hand; exec-path-from-shell is too slow at startup.

@@ -1,48 +1,53 @@
 ;;; init-ui.el --- Look and feel -*- lexical-binding: t; -*-
 
-(use-package doom-themes
+;; Same pairing as Ghostty: light = Catppuccin Latte, dark = Catppuccin Mocha.
+(use-package catppuccin-theme
   :demand t
   :config
-  (setq doom-themes-enable-bold t
-        doom-themes-enable-italic t)
-  (load-theme 'doom-solarized-dark t))
+  (setq catppuccin-flavor 'mocha
+        catppuccin-italic-comments t
+        catppuccin-italic-variables t)
+  (defun my/apply-appearance (&optional appearance)
+    "Load the Catppuccin flavor that matches the macOS APPEARANCE."
+    (setq catppuccin-flavor
+          (if (eq (or appearance ns-system-appearance) 'light) 'latte 'mocha))
+    (catppuccin-reload)
+    (dolist (frame (frame-list))
+      (when (display-graphic-p frame)
+        (set-frame-parameter frame 'ns-appearance
+                             (if (eq catppuccin-flavor 'latte) 'light 'dark))
+        (set-frame-parameter frame 'ns-transparent-titlebar t))))
+  (my/apply-appearance)
+  (when (boundp 'ns-system-appearance-change-functions)
+    (add-hook 'ns-system-appearance-change-functions #'my/apply-appearance)))
 
 ;;;; Fonts
 
 ;; The first installed font in each list wins.
-(defvar my/mono-fonts '("JetBrainsMono Nerd Font Mono" "JetBrains Mono" "Fira Code"
+;; The first installed font wins. Ghostty uses Maple Mono NF CN at 14pt;
+;; that family already covers CJK, so no separate han font or rescaling.
+(defvar my/mono-fonts '("Maple Mono NF CN"
+                        "JetBrainsMono Nerd Font Mono" "JetBrains Mono" "Fira Code"
                         "SF Mono" "Menlo" "Consolas" "DejaVu Sans Mono"))
-(defvar my/cjk-fonts '("PingFang SC" "Hiragino Sans GB" "Heiti SC"
-                       "Microsoft YaHei" "SimHei"
-                       "Noto Sans CJK SC" "Source Han Sans SC" "WenQuanYi Micro Hei"))
 
 (defun my/first-font (families frame)
   "Return the first of FAMILIES available on FRAME."
   (seq-find (lambda (f) (find-font (font-spec :family f) frame)) families))
 
-(defun my/font-extents (family frame)
-  "Return (ASCENT . DESCENT) of FAMILY opened at 100px on FRAME."
-  (when-let* ((entity (find-font (font-spec :family family) frame))
-              (info (query-font (open-font entity 100 frame))))
-    (cons (aref info 4) (aref info 5))))
-
 (defun my/setup-font (&optional frame)
-  "Set the default and CJK fonts on FRAME."
+  "Set the default font on FRAME. Maple Mono NF CN covers CJK too."
   (when (display-graphic-p frame)
     (when-let* ((font (my/first-font my/mono-fonts frame)))
-      (set-face-attribute 'default frame :family font :height 140))
-    ;; Scale the CJK font down to the mono font's height so lines stay even.
-    (when-let* ((cjk (my/first-font my/cjk-fonts frame)))
-      (let ((mono (my/font-extents (face-attribute 'default :family frame) frame))
-            (wide (my/font-extents cjk frame)))
-        (when (and mono wide (> (car wide) 0) (> (cdr wide) 0))
-          (let ((scale (min 1.0
-                            (/ (float (car mono)) (car wide))
-                            (/ (float (cdr mono)) (cdr wide)))))
-            (setf (alist-get (regexp-quote cjk) face-font-rescale-alist nil nil #'equal)
-                  (/ (ffloor (* scale 100)) 100)))))
+      ;; :height is tenths of a point; Ghostty font-size = 14.
+      (set-face-attribute 'default frame
+                          :family font :height 140 :weight 'regular
+                          :slant 'normal)
+      (set-face-attribute 'fixed-pitch frame :family font :height 140)
+      (set-face-attribute 'variable-pitch frame :family font :height 140)
+      ;; Ghostty adjust-cell-height = 15%.
+      (set-frame-parameter frame 'line-spacing 0.15)
       (dolist (charset '(han cjk-misc kana bopomofo))
-        (set-fontset-font t charset (font-spec :family cjk) frame)))))
+        (set-fontset-font t charset (font-spec :family font) frame)))))
 (my/setup-font)
 (add-hook 'after-make-frame-functions #'my/setup-font)
 

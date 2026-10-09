@@ -6,7 +6,7 @@ Fast-starting Emacs with Vim emulation, LSP (eglot) for C++/Go/Python/Rust, and 
 |---|---|
 | `early-init.el` | GC/file-handler tricks, frame chrome off, native-comp, package quickstart |
 | `lisp/init-core.el` | package setup, macOS modifiers/PATH, perf variables, state files under `var/` |
-| `lisp/init-ui.el` | doom-tokyo-night theme, font, relative line numbers, which-key, dashboard (`c` opens the config folder), treemacs file tree (`SPC e`) |
+| `lisp/init-ui.el` | Catppuccin (Latte/Mocha), font, relative line numbers, which-key, dashboard (`c` opens the config folder), treemacs file tree (`SPC e`) |
 | `lisp/init-evil.el` | evil, evil-collection, surround (`gsa/gsd/gsr`), comment (`gc`), avy (`s`) |
 | `lisp/init-completion.el` | vertico, orderless, marginalia, consult, embark, corfu, cape |
 | `lisp/init-copilot.el` | GitHub Copilot ghost text: `TAB` accepts (popup first if open), `C-<right>` word, `C-e` line, `M-]`/`M-[` cycle, `C-g` dismiss |
@@ -22,11 +22,12 @@ Fast-starting Emacs with Vim emulation, LSP (eglot) for C++/Go/Python/Rust, and 
 
 ## First run
 Packages install automatically. Then:
-1. Install servers you lack: `brew install llvm` / `go install golang.org/x/tools/gopls@latest` /
+1. Font: `brew install --cask font-maple-mono-nf-cn` (Maple Mono NF CN, 14pt; covers CJK).
+2. Install servers you lack: `brew install llvm` / `go install golang.org/x/tools/gopls@latest` /
    `uv tool install ty ruff` for Python;
    `rustup component add rust-analyzer rustfmt clippy` for Rust.
-2. Copilot: `M-x copilot-install-server`, then `M-x copilot-login` (node from fnm's default alias).
-3. Optional speed-up: `cargo install emacs-lsp-booster` (auto-detected).
+3. Copilot: `M-x copilot-install-server`, then `M-x copilot-login` (node from fnm's default alias).
+4. Optional speed-up: `cargo install emacs-lsp-booster` (auto-detected).
 
 C++ needs `compile_commands.json` (`cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON`).
 

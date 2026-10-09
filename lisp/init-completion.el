@@ -72,6 +72,14 @@
   (keymap-set corfu-map "C-k" #'corfu-previous)
   (require 'corfu-popupinfo)
   (corfu-popupinfo-mode 1)
+  ;; Corfu sizes the popup from `default-line-height', which ignores
+  ;; `line-spacing', but copies the parent's line spacing into the popup
+  ;; buffer. With the 15% spacing used for the editing frames that leaves a
+  ;; blank strip under every candidate.
+  (defun my/corfu-no-line-spacing (buffer)
+    (with-current-buffer buffer (setq-local line-spacing nil))
+    buffer)
+  (advice-add #'corfu--make-buffer :filter-return #'my/corfu-no-line-spacing)
   (with-eval-after-load 'evil
     (evil-define-key 'insert 'global (kbd "C-SPC") #'completion-at-point)
     ;; Insert-state bindings shadow `corfu-map', so bind through evil.

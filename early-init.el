@@ -48,8 +48,11 @@
 (push '(vertical-scroll-bars) default-frame-alist)
 (push '(horizontal-scroll-bars) default-frame-alist)
 (push '(ns-transparent-titlebar . t) default-frame-alist)
-(push '(ns-appearance . dark) default-frame-alist)
+;; Match Ghostty: internal padding, no native title-bar proxy icon,
+;; appearance follows the system (Latte / Mocha is applied in init-ui).
+(push '(internal-border-width . 8) default-frame-alist)
 (push '(fullscreen . maximized) default-frame-alist)
-(setq tool-bar-mode nil)
+(setq tool-bar-mode nil
+      ns-use-proxy-icon nil)
 
 ;;; early-init.el ends here
