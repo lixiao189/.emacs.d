@@ -2,24 +2,6 @@
 
 Fast-starting Emacs with Vim emulation, LSP (eglot) for C++/Go/Python/Rust, and LazyVim's keymaps.
 
-| File | Purpose |
-|---|---|
-| `early-init.el` | GC/file-handler tricks, frame chrome off, native-comp, package quickstart |
-| `lisp/init-core.el` | package setup, macOS modifiers/PATH, perf variables, state files under `var/` |
-| `lisp/init-ui.el` | Catppuccin (Latte/Mocha), font, relative line numbers, which-key, dashboard (`c` opens the config folder), treemacs file tree (`SPC e`) |
-| `lisp/init-evil.el` | evil, evil-collection, surround (`gsa/gsd/gsr`), comment (`gc`), avy (`s`) |
-| `lisp/init-completion.el` | vertico, orderless, marginalia, consult, embark, corfu, cape |
-| `lisp/init-copilot.el` | GitHub Copilot ghost text: `TAB` accepts (popup first if open), `C-<right>` word, `C-e` line, `M-]`/`M-[` cycle, `C-g` dismiss |
-| `lisp/init-git.el` | magit (`SPC g g`), diff-hl gutter |
-| `lisp/init-term.el` | vterm terminal (`SPC f t` at the project root; module builds with cmake on first use) |
-| `lisp/init-lsp.el` | shared eglot and apheleia setup |
-| `lisp/lang/init-cpp.el` | C/C++: 2-space indent, clangd |
-| `lisp/lang/init-go.el` | Go: go-mode, tabs, gopls settings, goimports |
-| `lisp/lang/init-python.el` | Python: ty (LSP), ruff linting (flymake-ruff) and formatting |
-| `lisp/lang/init-rust.el` | Rust: rust-mode, rust-analyzer (clippy checks), rustfmt |
-| `lisp/lang/init-markdown.el` | Markdown: markdown-mode, live preview with KaTeX math in an xwidget side window that scrolls with the editor (`SPC c p`) |
-| `lisp/init-keys.el` | LazyVim keymaps (`SPC` leader) |
-
 ## First run
 Packages install automatically. Then:
 1. Font: `brew install --cask font-maple-mono-nf-cn` (Maple Mono NF CN, 14pt; covers CJK).

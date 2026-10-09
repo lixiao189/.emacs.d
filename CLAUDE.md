@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-Personal Emacs 31 config for macOS: Vim emulation (evil), LSP via eglot (C++/Go/Python/Rust), LazyVim-style `SPC` leader keymaps. See `README.md` for the per-file table and first-run setup (LSP servers via brew/go/npm).
+Personal Emacs 31 config for macOS: Vim emulation (evil), LSP via eglot (C++/Go/Python/Rust), LazyVim-style `SPC` leader keymaps. See `docs/structure.md` for the file layout and load order, and `README.md` for first-run setup (LSP servers via brew/go/npm).
 
 ## Load order and architecture
 
